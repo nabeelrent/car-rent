@@ -32,7 +32,9 @@ function Expenses() {
 
 
   const getCar = async ()=>{
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/car/cars/`, {
+
+    const response = await fetch(`${process.env.REACT_APP_API_URL}car/cars/`, {
+
         method: 'GET',
         headers: {
             'Accept': 'application/json',
@@ -59,44 +61,31 @@ useEffect(() => {
 }, []);
   // Sample data
   const [expenses, setExpenses] = useState([
-    {
-      date: "16-27-2025",
-      regNo: "KL 56 W8976",
-      amount: "1000",
-      description: "Description",
-    },
-    {
-      date: "2-02-2025",
-      regNo: "Template 001",
-      amount: "500",
-      description: "Description",
-    },
-    {
-      date: "7-12-2025",
-      regNo: "Template 001",
-      amount: "700",
-      description: "Description",
-    },
+    
   ]);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [newExpense, setNewExpense] = useState({
-    selectedCars: [],
+    selectedCars: "",
     amount: "",
     description: "",
     expenseType: "",
   });
-
+useEffect(() => {
+    fetchExpenses()
+}, []);
   const handleAddCarExpense = (e) => {
     e.preventDefault();
     const newEntry = {
       date: new Date().toLocaleDateString(),
-      regNo: newExpense.selectedCars.join(", "),
+      regNo: newExpense.selectedCars,
       amount: newExpense.amount,
       description: newExpense.description,
     };
-    setExpenses([...expenses, newEntry]);
-    setNewExpense({ selectedCars: [], amount: "", description: "", expenseType: "" });
+    createExpense(newEntry)
+    fetchExpenses()
+
+    setNewExpense({ selectedCars: "", amount: "", description: "", expenseType: "" });
     setIsCarExpenseModalOpen(false);
   };
 
@@ -106,13 +95,74 @@ useEffect(() => {
       date: new Date().toLocaleDateString(),
       regNo: newExpense.expenseType,
       amount: newExpense.amount,
-      description: "Other Expense",
+      description: newExpense.description,
     };
-    setExpenses([...expenses, newEntry]);
-    setNewExpense({ selectedCars: [], amount: "", description: "", expenseType: "" });
+    
+    createExpense(newEntry)
+
+    fetchExpenses()
+    setNewExpense({ selectedCars: "", amount: "", description: "", expenseType: "" });
     setIsOtherExpenseModalOpen(false);
   };
 
+
+  async function fetchExpenses() {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expenses/`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}` // If authentication is required
+        }
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Failed to fetch expenses:", errorData);
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Fetched expenses:', data);
+    setExpenses(data.map((single_data)=>{
+      return {
+     
+      date: single_data.expense_date,
+      regNo: single_data.expense_type,
+      amount: single_data.amount,
+      description:single_data.description,
+    
+      }
+    }))
+}
+
+
+
+async function createExpense(expenseData) {
+  const newEntry = {
+      expense_date: new Date().toISOString(),
+      expense_type: expenseData.regNo,
+      amount: expenseData.amount,
+      description: expenseData.description,
+    };
+    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expenses/`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}` // If authentication is required
+        },
+        body: JSON.stringify(newEntry)
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Failed to create expense:", errorData);
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Expense created:', data);
+}
   return (
     <div className="p-6 w-full">
       {/* Header */}
@@ -238,13 +288,13 @@ useEffect(() => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Select Cars</label>
                   <select
-                    multiple
+                    
                     className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     value={newExpense.selectedCars}
                     onChange={(e) =>
                       setNewExpense({
                         ...newExpense,
-                        selectedCars: Array.from(e.target.selectedOptions, (option) => option.value),
+                        selectedCars: e.target.value,
                       })
                     }
                   >
@@ -337,6 +387,20 @@ useEffect(() => {
                     required
                   />
                 </div>
+              
+              <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <textarea
+                    value={newExpense.description}
+                    onChange={(e) => setNewExpense({ ...newExpense, description: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter description"
+                    rows={3}
+                    required
+                  />
+                </div>
+
+
 
                 <div className="flex justify-end gap-3 mt-6">
                   <button
