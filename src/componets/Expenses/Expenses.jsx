@@ -32,7 +32,9 @@ function Expenses() {
 
 
   const getCar = async ()=>{
+
     const response = await fetch(`${process.env.REACT_APP_API_URL}car/cars/`, {
+
         method: 'GET',
         headers: {
             'Accept': 'application/json',

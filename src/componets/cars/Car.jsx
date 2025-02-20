@@ -27,7 +27,7 @@ async function createCar(car_data) {
   
   if(!isEdit)
   {
-  const response = await fetch('http://127.0.0.1:8000/car/cars/', {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/car/cars/`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -45,7 +45,7 @@ async function createCar(car_data) {
 
   }
   else{
-     const response = await fetch(`http://127.0.0.1:8000/car/cars/${newCar.id}/`, {
+     const response = await fetch(`${process.env.REACT_APP_API_URL}/car/cars/${newCar.id}/`, {
         method: 'PUT',
         headers: {
             'Accept': 'application/json',
@@ -71,7 +71,7 @@ async function createCar(car_data) {
 }
 
 const getCar = async ()=>{
-    const response = await fetch('http://127.0.0.1:8000/car/cars/', {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/car/cars/`, {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
@@ -112,7 +112,7 @@ useEffect(() => {
     
   };
   const carDelete = async (carId)=>{
-    const response = await fetch(`http://127.0.0.1:8000/car/cars/${carId}/`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/car/cars/${carId}/`, {
         method: 'DELETE',
         headers: {
             'Accept': 'application/json',
