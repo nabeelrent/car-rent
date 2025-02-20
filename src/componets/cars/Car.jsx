@@ -1,8 +1,14 @@
 import { FaPencilAlt, FaTrash, FaTimes } from "react-icons/fa";
 import React, { useState,useEffect } from "react";
 import { FaSearch } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
+import { setPageName } from '../../store/pageSlice';
 
 function Car() {
+  const dispatch = useDispatch();
+
+    dispatch(setPageName('Car List')); // Setting the page name
+ 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newCar, setNewCar] = useState({
     regNo: "",

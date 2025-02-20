@@ -17,8 +17,8 @@ import logo from '../../assets/logo/logo.png';
 
 function SidebarBotConfiguration() {
   const menuData = [
-    { name: "Cars", icon: <FaHome />, path: "/boatoverview", subMenu: null },
-    { name: "Expence", icon: <FaHome />, path: "/boatoverview", subMenu: null },
+    { name: "Cars", icon: <FaHome />, path: "/cars/car-list/", subMenu: null },
+    { name: "Expence", icon: <FaHome />, path: "/cars/expenses/", subMenu: null },
    
   ];
 
@@ -33,16 +33,20 @@ function SidebarBotConfiguration() {
   const [currentMenu, setCurrentMenu] = useState("main");
   const [submenuIndex, setSubmenuIndex] = useState(null);
   const handleMenuClick = (menu, index) => {
-    if (menu.subMenu) {
-      setCurrentMenu(`submenu-${index}`);
-      setSubmenuIndex(index);
+    console.log(menu,"menu-b");
+    console.log(menu.path,"menu-b-pp");
 
-    } else if (menu.path) {
+    navigate(menu.path);
+    // if (menu.subMenu) {
+    //   setCurrentMenu(`submenu-${index}`);
+    //   setSubmenuIndex(index);
 
-      navigate("/boatconfigure/");
+    // } else if (menu.path) {
+
+    //   navigate("/boatconfigure/");
 
      
-    }
+    // }
   };
 
   const handleSubMenuClick = (menu) => {
@@ -55,7 +59,7 @@ function SidebarBotConfiguration() {
 
     }
   };
-  const [label, setlabel] = useState(false);
+  const [label, setlabel] = useState(true);
   const togglelabel = () => {
     setlabel((prev) => !prev);
   };
@@ -79,22 +83,23 @@ function SidebarBotConfiguration() {
   
   return (
     <>
+     <div className='absolute top-0 left-24 transform -translate-x-1/2 mb-2 flex justify-center items-center'>
+  <button className="flex justify-center items-center">
+    <img className="w-24 h-16" src={logo} alt="" onClick={togglelabel} />
+  </button>
+</div>
 
-      {/* Sidebar for larger screens */}
       <div
-        className={`hidden md:flex border-r-[1px] border-gray-600  ${label ? 'w-52' : 'w-20'}  h-screen ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-all`}
+        className={`hidden md:flex border-r-[1px] border-gray-600  ${label ? 'w-[212px]' : 'w-20'}  h-screen ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-all`}
       >
 
 
         <div
-          className={`bg-gray-400  p-4 ${label ? 'w-64' : ''}  overflow-y-auto transition-all [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300`}
+          className={`bg-gradient-to-r from-[#B41749] to-[#387BBF]  p-4 ${label ? 'w-64' : ''}  overflow-y-auto transition-all [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300`}
         >    
-            <div className={`w-4/4  mb-2 flex justify-center items-center ${label ? '' : ''}`}>
-                <button className='flex justify-center items-center'>
-                <img className='w-12 h-10' src={logo} alt=""  onClick={togglelabel}/>
-                </button>
-              </div>
-          {currentMenu === "main" ? (
+
+
+          {/* {currentMenu === "main" ? (
 
             <div className='flex w-full gap-2'>
              
@@ -119,7 +124,7 @@ function SidebarBotConfiguration() {
             </div>
 
 
-          )}
+          )} */}
 
           {/* Main Menu */}
           {currentMenu === "main" && (
@@ -127,7 +132,7 @@ function SidebarBotConfiguration() {
               {menuData.map((item, index) => (
                 <button
                   key={index}
-                  className="flex items-center bg-gradient-buttoncolour1 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-full"
+                  className="flex items-center bg-gradient-buttoncolour1 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-full hover:bg-white hover:text-black"
                   // className={`flex items-center  bg-gradient-buttoncolour1 text-white ${label ? 'px-4 py-2' : 'px-2 py-2 justify-center'} rounded-md hover:bg-gradient-color1 w-full`}
                   onClick={() => handleMenuClick(item, index)}
                 >
@@ -145,7 +150,7 @@ function SidebarBotConfiguration() {
               {menuData[submenuIndex].subMenu.map((subItem, subIndex) => (
                 <button
                   key={subIndex}
-                  className="flex items-center bg-gradient-buttoncolour1 text-white px-4 py-2 rounded-md hover:bg-blue-600 w-full"
+                  className="flex items-center bg-gradient-buttoncolour1 text-white px-4 py-2 rounded-md hover:bg-white hover:text-black w-full"
                   // onClick={() => navigate(subItem.path)}
                   onClick={() => handleSubMenuClick(subItem.path)}
 
