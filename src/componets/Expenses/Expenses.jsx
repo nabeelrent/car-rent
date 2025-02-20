@@ -2,6 +2,10 @@ import React, { useState ,useEffect} from "react";
 import { FaCalendar, FaDownload, FaEdit, FaTimes } from "react-icons/fa";
 import { useDispatch } from 'react-redux';
 import { setPageName } from '../../store/pageSlice';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import * as XLSX from "xlsx";
+
 function Expenses() {
       const dispatch = useDispatch();
     
@@ -16,7 +20,13 @@ function Expenses() {
   //   { value: "Template 001", label: "Template 001" },
   //   { value: "Template 002", label: "Template 002" },
   // ];
-
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(expenses);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Expenses");
+    XLSX.writeFile(workbook, "Expenses_List.xlsx");
+  };
+  
 
   const [carOptions,setCaroption] = useState([])
 
@@ -68,7 +78,8 @@ useEffect(() => {
       description: "Description",
     },
   ]);
-
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
   const [newExpense, setNewExpense] = useState({
     selectedCars: [],
     amount: "",
@@ -125,22 +136,33 @@ useEffect(() => {
 
       {/* Filters */}
       <div className="flex gap-4 mb-6">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="From Date"
-            className="pl-10 pr-4 py-2 border rounded-md w-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <FaCalendar className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-        </div>
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="To Date"
-            className="pl-10 pr-4 py-2 border rounded-md w-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <FaCalendar className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-        </div>
+      <div className="relative">
+        <DatePicker
+          selected={fromDate}
+          onChange={(date) => setFromDate(date)}
+          selectsStart
+          startDate={fromDate}
+          endDate={toDate}
+          placeholderText="From Date"
+          className="pl-10 pr-4 py-2 border rounded-md w-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <FaCalendar className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
+      </div>
+
+      {/* To Date Picker */}
+      <div className="relative">
+        <DatePicker
+          selected={toDate}
+          onChange={(date) => setToDate(date)}
+          selectsEnd
+          startDate={fromDate}
+          endDate={toDate}
+          minDate={fromDate}
+          placeholderText="To Date"
+          className="pl-10 pr-4 py-2 border rounded-md w-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <FaCalendar className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
+      </div>
         <select className="px-4 py-2 border rounded-md w-48 focus:outline-none focus:ring-2 focus:ring-blue-500">
           <option value="">Choose Car</option>
           {carOptions.map((car) => (
@@ -149,10 +171,14 @@ useEffect(() => {
             </option>
           ))}
         </select>
-        <button className="flex items-center gap-2 px-4 py-2 text-blue-500 bg-blue-50 rounded-md hover:bg-blue-100">
-          <FaDownload className="h-5 w-5" />
-          Sample File
-        </button>
+        <button
+  className="flex items-center gap-2 px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
+  onClick={exportToExcel}
+>
+  <FaDownload className="h-5 w-5" />
+  Download Excel
+</button>
+
       </div>
 
       {/* Table */}
