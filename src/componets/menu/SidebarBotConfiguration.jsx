@@ -17,8 +17,8 @@ import logo from '../../assets/logo/logo.png';
 
 function SidebarBotConfiguration() {
   const menuData = [
-    { name: "Cars", icon: <FaHome />, path: "/boatoverview", subMenu: null },
-    { name: "Expence", icon: <FaHome />, path: "/boatoverview", subMenu: null },
+    { name: "Cars", icon: <FaHome />, path: "/cars/car-list/", subMenu: null },
+    { name: "Expence", icon: <FaHome />, path: "/cars/expenses/", subMenu: null },
    
   ];
 
@@ -34,17 +34,19 @@ function SidebarBotConfiguration() {
   const [submenuIndex, setSubmenuIndex] = useState(null);
   const handleMenuClick = (menu, index) => {
     console.log(menu,"menu-b");
-    
-    if (menu.subMenu) {
-      setCurrentMenu(`submenu-${index}`);
-      setSubmenuIndex(index);
+    console.log(menu.path,"menu-b-pp");
 
-    } else if (menu.path) {
+    navigate(menu.path);
+    // if (menu.subMenu) {
+    //   setCurrentMenu(`submenu-${index}`);
+    //   setSubmenuIndex(index);
 
-      navigate("/boatconfigure/");
+    // } else if (menu.path) {
+
+    //   navigate("/boatconfigure/");
 
      
-    }
+    // }
   };
 
   const handleSubMenuClick = (menu) => {

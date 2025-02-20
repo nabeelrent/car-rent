@@ -7,7 +7,7 @@ import { setPageName } from '../../store/pageSlice';
 function Car() {
   const dispatch = useDispatch();
 
-    dispatch(setPageName('Dashboard')); // Setting the page name
+    dispatch(setPageName('Car List')); // Setting the page name
  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newCar, setNewCar] = useState({
