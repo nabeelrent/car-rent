@@ -11,12 +11,32 @@ function Expenses() {
   const [isOtherExpenseModalOpen, setIsOtherExpenseModalOpen] = useState(false);
 
   // Sample car options for multi-select
-  const carOptions = [
-    { value: "KL 56 W8976", label: "KL 56 W8976" },
-    { value: "Template 001", label: "Template 001" },
-    { value: "Template 002", label: "Template 002" },
-  ];
 
+  const [carOptions,setCaroption] = useState({})
+
+
+  const getCar = async ()=>{
+    const response = await fetch('http://127.0.0.1:8000/car/cars/', {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Ensure this is dynamically fetched if needed
+        },
+        
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Car created:', data);
+    setCaroption(data)
+}
+useEffect(() => {
+    getCar()
+}, []);
   // Sample data
   const [expenses, setExpenses] = useState([
     {
