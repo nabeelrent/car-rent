@@ -2,14 +2,14 @@ import React from 'react';
 import { Routes, Route } from "react-router-dom";
 import PrivateAuth from '../authorization/PrivateAuth';
 import SidebarConfigure from '../../../sidebarconfigure/SidebarConfigure';
+import Car from '../../../componets/cars/Car';
 
 function AccountSetting() {
     return (
         <SidebarConfigure>
             <Routes>
                 <Route element={<PrivateAuth />}>
-                    {/* <Route exact path="profile-settings" element={<Profilesettings />} />
-                    <Route exact path="theme-settings" element={<ThemeSettings />} /> */}
+                    <Route exact path="car-list/" element={<Car />} />
 
                     
                 </Route>

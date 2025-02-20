@@ -8,55 +8,19 @@ import { MdOutlinePrivacyTip } from "react-icons/md";
 import { IoIosLogOut } from "react-icons/io";
 import { useDispatch } from "react-redux";
 import { userlogout } from "../../store/AuthSlice";
-import { MdAccountTree } from "react-icons/md";
 import { IoRadioButtonOn, } from "react-icons/io5";
 import { IoIosRadioButtonOff } from "react-icons/io";
-import { TiLightbulb } from "react-icons/ti";
-import { FaQrcode } from "react-icons/fa";
-import { GrOverview } from "react-icons/gr";
-import { SiTricentis } from "react-icons/si";
-import { CiDatabase } from "react-icons/ci";
-import { MdOutlineModelTraining } from "react-icons/md";
-import { useSelector } from "react-redux";
+
+import logo from '../../assets/logo/logo.png';
 
 
 
 function SidebarBotConfiguration() {
   const menuData = [
-    { name: "Homee", icon: <FaHome />, path: "/boatoverview", subMenu: null },
-    {
-      name: "Settings",
-      icon: <FaCog />,
-      path: null,
-      subMenu: [
-        {icon: <GrOverview />, name: "one ", path: "/settings/profile" },
-        {icon: <GrOverview />, name: "Two ", path: "/settings/account" },
-      ],
-    },
-    {
-      name: "builder",
-      icon: <MdAccountTree />,
-      path: "/builder",
-      subMenu: null,
-    },
-    {
-      name: "Train",
-      icon: <TiLightbulb />,
-      path: null,
-  
-      subMenu: [
-        { icon: <GrOverview />, name: "Overview ", path: "/train/overivew" },
-        { icon: <FaQrcode />, name: "FAQS ", path: "/train/faqs" },
-        { icon: <SiTricentis />, name: "Entities ", path: "/train/entities" },
-        { icon: <CiDatabase />, name: "Tabular Input ", path: "/train/tabularinput" },
-        { icon: <MdOutlineModelTraining />, name: "Training ", path: "/train/training" },
-        { icon: <TiLightbulb />, name: "Settings ", path: "/train/account" },
-      ],
-    },
-  
-  
+    { name: "Cars", icon: <FaHome />, path: "/boatoverview", subMenu: null },
+    { name: "Expence", icon: <FaHome />, path: "/boatoverview", subMenu: null },
+   
   ];
-  const botId = useSelector((state) => state.bot.botId);
 
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
@@ -75,14 +39,9 @@ function SidebarBotConfiguration() {
 
     } else if (menu.path) {
 
-      navigate("/boatconfigure/" +botId+ menu.path);
+      navigate("/boatconfigure/");
 
-      // console.log(menu.path,"menu.path");
-      
-      // const pathSegments = location.pathname.split("/");
-      // pathSegments[pathSegments.length - 1] = "builder";
-      // const newPath = pathSegments.join("/");
-      // navigate(newPath);
+     
     }
   };
 
@@ -90,15 +49,9 @@ function SidebarBotConfiguration() {
     console.log(menu,"menu--003");
     
     if (menu) {
-      navigate("/boatconfigure/" +botId+ menu);
+      navigate("/boatconfigure/");
 
-      // const pathSegments = location.pathname.split("/");
-
-      // pathSegments[pathSegments.length - 1] = "builder";
-      // const newPath = pathSegments.join("/");
-      // console.log(newPath,"newPath-002");
-      
-      // navigate(newPath);
+     
 
     }
   };
@@ -134,35 +87,17 @@ function SidebarBotConfiguration() {
 
 
         <div
-          className={`bg-gradient-color2  p-4 ${label ? 'w-64' : ''}  overflow-y-auto transition-all [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300`}
+          className={`bg-gray-400  p-4 ${label ? 'w-64' : ''}  overflow-y-auto transition-all [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300`}
         >    
             <div className={`w-4/4  mb-2 flex justify-center items-center ${label ? '' : ''}`}>
                 <button className='flex justify-center items-center'>
-                  {/* <FaBars /> */}
-                <img className='w-7 h-7' src='https://i.pinimg.com/736x/c0/74/9b/c0749b7cc401421662ae901ec8f9f660.jpg' alt=""  onClick={togglelabel}/>
+                <img className='w-12 h-10' src={logo} alt=""  onClick={togglelabel}/>
                 </button>
               </div>
-              {/* Top Section */}
           {currentMenu === "main" ? (
 
             <div className='flex w-full gap-2'>
-              <div
-                className="w-full bg-white hover:bg-gradient-color1 px-3 rounded-md text-lg p-1 text-black hover:text-white flex gap-3  items-center  cursor-pointer"
-                onClick={() => handleNavigation("/boat/boatlist")}
-              >
-                {label ? (
-                  <>
-                    <FaArrowLeft className='' />
-                    Chat Bot
-                  </>
-                ) : (
-                  <FaArrowLeft className="w-5" />
-                )}
-              </div>
-              {/* <div className={`w-1/4  flex justify-center items-center ${label ? '' : 'absolute top-12 left-7'}`}>
-                <button className='flex justify-center items-center' onClick={togglelabel}><FaBars />
-                </button>
-              </div> */}
+             
             </div>
           ) : (
             <div className='flex w-full gap-2'>
@@ -180,10 +115,7 @@ function SidebarBotConfiguration() {
                 )}
 
               </div>
-              {/* <div className={`w-1/4  flex justify-center items-center ${label ? '' : 'absolute top-12 left-7'}`}>
-                <button className='flex justify-center items-center' onClick={togglelabel}><FaBars />
-                </button>
-              </div> */}
+            
             </div>
 
 

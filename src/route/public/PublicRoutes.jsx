@@ -13,16 +13,14 @@ function PublicRoutes() {
 
   // Redirect to a private route (e.g., dashboard) if the user is already authenticated
   if (isAuthenticated) {
-    return <Navigate to="/boat/boatlist" replace />;
+    return <Navigate to="/cars/car-list/" replace />;
   }
 
   return (
     <div>
       <Routes>
         <Route exact path="/" element={<Login />} />
-        {/* <Route exact path="/signup" element={<Signup />} />
-        <Route exact path="/forgotpassword" element={<ForgotPassword />} />
-        <Route exact path="/test" element={<Test />} /> */}
+     
 
         
         

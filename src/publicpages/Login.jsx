@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
-// import logo from '../assets/logos/logoone.png';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-// import bot from '../assets/bg-images/bot.png';
 import { useNavigate } from 'react-router-dom';
 import { connectAPIViaPost } from '../services/Post';
-// import { userLogIn } from '../constants/authentication/AuthenticationApi';
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../store/AuthSlice";
-// import { setTheme } from "../store/themeSlice"; 
 import logo from '../assets/logo/logo.png';
+import { userSignUp } from '../constants/Apicalls';
 
 function Login() {
   const navigate = useNavigate();
@@ -30,16 +27,18 @@ const userLogIn = "dfg"
       
     };
     try {
-      const response = await connectAPIViaPost(data, userLogIn);
+      const response = await connectAPIViaPost(data, userSignUp);
+      console.log(response,"response-01");
+      
       if (response.status === 200) {
 
         setError("");
         localStorage.clear();
-        localStorage.setItem('access_token', response.data.access_token);
+        localStorage.setItem('access_token', response.data.access);
         const userdata = {
-          accessToken: response.data.access_token,
-          username:response.data.username,
-          email:response.data.email
+          accessToken: response.data.access,
+          // username:response.data.username,
+          // email:response.data.email
         };
         
   
@@ -50,7 +49,7 @@ const userLogIn = "dfg"
   
         localStorage.setItem('username', username);
   
-        navigate('/boat/boatlist');
+        navigate('/cars/car-list/');
       }
     } catch (error) {
       if (error.response) {
@@ -84,7 +83,7 @@ const userLogIn = "dfg"
               <div className='bg-white bg-opacity-10 md:h-[540.66px] h-[500px] w-[350px] md:w-[410px] rounded-xl border border-white border-opacity-15 md:mb-0 mb-16'>
                 <div className='md:p-10 p-4'>
                   <div className='flex justify-center items-center p-1 mb-4'>
-                    <img className='w-34 h-10' src='https://m.economictimes.com/thumb/msid-106775052,width-1600,height-900,resizemode-4,imgsize-69266/mclaren-750s-launched-in-india-at-rs-5-91-crore-what-makes-it-so-expensive.jpg'alt="" />
+                    <img className='w-36 h-32' src={logo} alt="" />
                   </div>
                   <div className='mb-4 flex justify-start'>
                     <h1 className='text-4xl font-bold font-poppins text-white'>Log in</h1>
@@ -93,7 +92,7 @@ const userLogIn = "dfg"
                     <div className="flex flex-col">
                       <div className="mb-4">
                         <label className="px-1 text-sm mb-2 flex justify-start" htmlFor="username">
-                          Email
+                       Username
                         </label>
                         <input
                           className='text-black rounded w-full py-2 px-3'
@@ -131,8 +130,8 @@ const userLogIn = "dfg"
                             )}
                           </div>
                         </div>
-                        <span className="px-1 text-sm text-white hover:cursor-pointer"
-                          onClick={() => navigate('/forgotpassword')}>Forgot Password?</span>
+                        {/* <span className="px-1 text-sm text-white hover:cursor-pointer"
+                          onClick={() => navigate('/forgotpassword')}>Forgot Password?</span> */}
                       </div>
                       {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
                       <div className='rounded-md h-[40px] flex justify-center text-white md:mb-4 mb-3 bg-[#003465]'>
@@ -140,14 +139,14 @@ const userLogIn = "dfg"
                           <div className='pr-[10px]'>Sign in</div>
                         </button>
                       </div>
-                      <div className='flex justify-center'>
+                      {/* <div className='flex justify-center'>
                         <p className='md:text-sm text-xs'>
                           Don't have an account?{' '}
                           <button className='font-poppins font-semibold' onClick={() => navigate('/signup')}>
                             Create account
                           </button>
                         </p>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>

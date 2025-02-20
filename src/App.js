@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { userlogout } from "../src/store/AuthSlice";
 import AccountSetting from "./route/privateRotes/privateRote/AccountSetting";
+import Navbar from "./componets/menu/Navbar";
 
 
 function App() {
@@ -45,10 +46,10 @@ function App() {
 
 
           <Route
-            path="/account-settings/*"
+            path="/cars/*"
             element={
               <>
-                {/* <Navbar /> */}
+                <Navbar />
                 <AccountSetting />
               </>
             }
