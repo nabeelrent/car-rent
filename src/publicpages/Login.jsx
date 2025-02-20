@@ -98,7 +98,7 @@ const userLogIn = "dfg"
                           className='text-black rounded w-full py-2 px-3'
                           id="email"
                           type="text"
-                          placeholder="Enter Email"
+                          placeholder="Enter Username"
                           onChange={(e) => {
                             setUsername(e.target.value);
                             setError(null);
