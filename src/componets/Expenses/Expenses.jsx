@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import { FaCalendar, FaDownload, FaEdit, FaTimes } from "react-icons/fa";
 import { useDispatch } from 'react-redux';
 import { setPageName } from '../../store/pageSlice';
@@ -11,8 +11,14 @@ function Expenses() {
   const [isOtherExpenseModalOpen, setIsOtherExpenseModalOpen] = useState(false);
 
   // Sample car options for multi-select
+  // const carOptions = [
+  //   { value: "KL 56 W8976", label: "KL 56 W8976" },
+  //   { value: "Template 001", label: "Template 001" },
+  //   { value: "Template 002", label: "Template 002" },
+  // ];
 
-  const [carOptions,setCaroption] = useState({})
+
+  const [carOptions,setCaroption] = useState([])
 
 
   const getCar = async ()=>{
@@ -32,7 +38,11 @@ function Expenses() {
 
     const data = await response.json();
     console.log('Car created:', data);
-    setCaroption(data)
+    setCaroption(data.map((single_data)=>{
+      return {value:single_data.car_no,
+        label:single_data.car_no
+      }
+    }))
 }
 useEffect(() => {
     getCar()
