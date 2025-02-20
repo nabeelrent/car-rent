@@ -71,7 +71,7 @@ const userLogIn = "dfg"
 
   return (
     <>
-      <div className='bg-gradient-to-r from-[#003465] via-[#0085FF] to-[#003465] '>
+      <div className='bg-gradient-to-r from-[#B41749] to-[#387BBF] '>
         <div className="min-h-screen w-full h-full">
           <div className="md:flex">
             <div className="md:w-1/2 w-full h-full flex justify-center items-center md:mt-14 ">

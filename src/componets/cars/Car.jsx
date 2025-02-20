@@ -32,7 +32,7 @@ async function createCar(car_data) {
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Ensure this is dynamically fetched if needed
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}` 
         },
         body: JSON.stringify(car_data)
     });
@@ -161,7 +161,7 @@ setNewCar({id:car_data.id,regNo:car_data.car_no,model:car_data.car_model})
                         </div>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+          className="px-4 py-2 bg-gradient-to-r from-[#B41749] to-[#387BBF] text-white rounded-md hover:bg-blue-600 transition-colors"
         >
           + Add Car
         </button>
@@ -246,7 +246,7 @@ setNewCar({id:car_data.id,regNo:car_data.car_no,model:car_data.car_model})
                 </div>
 
                 <div className="flex justify-end gap-3 mt-6">
-                  <button type="submit"  className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">
+                  <button type="submit"  className="px-4 py-2 bg-gradient-to-r from-[#B41749] to-[#387BBF] text-white rounded-md hover:bg-green-600">
                     Save
                   </button>
                   <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400">
