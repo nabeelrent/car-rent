@@ -16,13 +16,18 @@ function Car() {
   });
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Sample data
+const [isEdit,setIsEdit] = useState(false)
   const [cars, setCars] = useState([
     
   ]);
+ 
 
 async function createCar(car_data) {
-    const response = await fetch('http://127.0.0.1:8000/car/cars/', {
+  console.log(isEdit,"car_data");
+  
+  if(!isEdit)
+  {
+  const response = await fetch('http://127.0.0.1:8000/car/cars/', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -37,7 +42,31 @@ async function createCar(car_data) {
     }
 
     const data = await response.json();
-    getCar()
+
+  }
+  else{
+     const response = await fetch(`http://127.0.0.1:8000/car/cars/${newCar.id}/`, {
+        method: 'PUT',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+             // Ensure this is dynamically fetched if needed
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}` // If authentication is required
+        },
+        body: JSON.stringify(car_data)
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Failed to update car:", errorData);
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Car updated:', data);
+    setIsEdit(false)
+  }
+      getCar()
     
 }
 const getCar = async ()=>{
@@ -77,6 +106,7 @@ useEffect(() => {
       createCar(newCarEntry)
     setIsModalOpen(false);
     console.log(newCarEntry);
+    
   
     
   };
@@ -97,6 +127,15 @@ useEffect(() => {
         console.error("Failed to delete car:", errorData);
     }
     getCar()
+}
+
+const carEdit = (car_data)=>{
+  console.log(car_data);
+  
+setIsModalOpen(true)
+setIsEdit(true)
+
+setNewCar({id:car_data.id,regNo:car_data.car_no,model:car_data.car_model})
 }
   
 
@@ -149,11 +188,11 @@ useEffect(() => {
                 <td className="px-6 py-4 text-sm text-gray-600">{car.date_created}</td>
                 <td className="px-6 py-4 text-sm text-gray-600">
                   <div className="flex gap-3">
-                    <button className="text-gray-600 hover:text-blue-500">
+                    <button onClick={()=>carEdit(car)} className="text-gray-600 hover:text-blue-500">
                       <FaPencilAlt className="h-4 w-4" />
                     </button>
                     <button onClick={()=>carDelete(car.id)} className="text-gray-600 hover:text-red-500">
-                      <FaTrash className="h-4 w-4" />
+                      <FaTrash  className="h-4 w-4" />
                     </button>
                   </div>
                 </td>
@@ -174,7 +213,7 @@ useEffect(() => {
               </button>
             </div>
 
-            <form onSubmit={handleAddCar}>
+            <form onSubmit={(e)=>handleAddCar(e)}>
               <div className="space-y-4">
                 <div>
                   <label htmlFor="regNo" className="block text-sm font-medium text-gray-700 mb-1">
