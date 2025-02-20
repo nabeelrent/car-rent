@@ -1,5 +1,5 @@
 import { FaPencilAlt, FaTrash, FaTimes } from "react-icons/fa";
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { FaSearch } from 'react-icons/fa';
 
 function Car() {
@@ -12,38 +12,87 @@ function Car() {
 
   // Sample data
   const [cars, setCars] = useState([
-    {
-      serialNo: "01",
-      regNo: "KL 55 W8976",
-      model: "Swift",
-      date: "25-12-2025",
-    },
-    {
-      serialNo: "02",
-      regNo: "Template 001",
-      model: "Muskan123@gmail.com",
-      date: "170116764418775462",
-    },
-    {
-      serialNo: "03",
-      regNo: "Template 001",
-      model: "Muskan123@gmail.com",
-      date: "170116764418775462",
-    },
+    
   ]);
+
+async function createCar(car_data) {
+    const response = await fetch('http://127.0.0.1:8000/car/cars/', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Ensure this is dynamically fetched if needed
+        },
+        body: JSON.stringify(car_data)
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    getCar()
+    
+}
+const getCar = async ()=>{
+    const response = await fetch('http://127.0.0.1:8000/car/cars/', {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Ensure this is dynamically fetched if needed
+        },
+        
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Car created:', data);
+    setCars(data)
+}
+useEffect(() => {
+    getCar()
+}, []);
+
 
   const handleAddCar = (e) => {
     e.preventDefault();
     const newCarEntry = {
-      serialNo: (cars.length + 1).toString().padStart(2, "0"),
-      regNo: newCar.regNo,
-      model: newCar.model,
-      date: new Date().toLocaleDateString(),
+      
+      car_no: newCar.regNo,
+      car_model: newCar.model,
+      date_created: new Date().toISOString()
     };
-    setCars([...cars, newCarEntry]);
-    setNewCar({ regNo: "", model: "" });
+    
+    
+      createCar(newCarEntry)
     setIsModalOpen(false);
+    console.log(newCarEntry);
+  
+    
   };
+  const carDelete = async (carId)=>{
+    const response = await fetch(`http://127.0.0.1:8000/car/cars/${carId}/`, {
+        method: 'DELETE',
+        headers: {
+            'Accept': 'application/json',
+            
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}` // If authentication is required
+        }
+    });
+
+    if (response.status === 204) {
+        console.log(`Car with ID ${carId} deleted successfully.`);
+    } else {
+        const errorData = await response.json();
+        console.error("Failed to delete car:", errorData);
+    }
+    getCar()
+}
+  
 
   return (
     <div className="w-full px-4 py-6">
@@ -87,17 +136,17 @@ function Car() {
           </thead>
           <tbody className="divide-y divide-gray-200">
             {cars.map((car) => (
-              <tr key={car.serialNo} className="hover:bg-gray-50">
-                <td className="px-6 py-4 text-sm text-gray-600">{car.serialNo}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{car.regNo}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{car.model}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{car.date}</td>
+              <tr key={car.id} className="hover:bg-gray-50">
+                <td className="px-6 py-4 text-sm text-gray-600">{car.id}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{car.car_no}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{car.car_model}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{car.date_created}</td>
                 <td className="px-6 py-4 text-sm text-gray-600">
                   <div className="flex gap-3">
                     <button className="text-gray-600 hover:text-blue-500">
                       <FaPencilAlt className="h-4 w-4" />
                     </button>
-                    <button className="text-gray-600 hover:text-red-500">
+                    <button onClick={()=>carDelete(car.id)} className="text-gray-600 hover:text-red-500">
                       <FaTrash className="h-4 w-4" />
                     </button>
                   </div>
@@ -152,7 +201,7 @@ function Car() {
                 </div>
 
                 <div className="flex justify-end gap-3 mt-6">
-                  <button type="submit" className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">
+                  <button type="submit"  className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">
                     Save
                   </button>
                   <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400">
