@@ -56,12 +56,20 @@ function Expenses() {
 
     const data = await response.json();
     console.log('Car created:', data);
-    setCaroption(data.map((single_data) => {
-      return {
+    if (data.length > 0) {
+      const formattedCars = data.map((single_data) => ({
         value: single_data.car_no,
-        label: single_data.car_no
-      }
-    }))
+        label: single_data.car_no,
+      }));
+
+      setCaroption(formattedCars);
+
+      // Automatically set the first car as selected
+      setNewExpense((prev) => ({
+        ...prev,
+        selectedCars: formattedCars[0].value,
+      }));
+    }
   }
   useEffect(() => {
     getCar()
