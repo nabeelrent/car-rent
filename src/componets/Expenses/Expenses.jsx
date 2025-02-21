@@ -83,7 +83,7 @@ useEffect(() => {
       description: newExpense.description,
     };
     createExpense(newEntry)
-    fetchExpenses()
+    
 
     setNewExpense({ selectedCars: "", amount: "", description: "", expenseType: "" });
     setIsCarExpenseModalOpen(false);
@@ -100,7 +100,7 @@ useEffect(() => {
     
     createExpense(newEntry)
 
-    fetchExpenses()
+    
     setNewExpense({ selectedCars: "", amount: "", description: "", expenseType: "" });
     setIsOtherExpenseModalOpen(false);
   };
@@ -133,6 +133,8 @@ useEffect(() => {
     
       }
     }))
+    console.log(expenses,"data");
+    
 }
 
 
@@ -162,7 +164,8 @@ async function createExpense(expenseData) {
 
     const data = await response.json();
     console.log('Expense created:', data);
-}
+fetchExpenses()
+  }
   return (
     <div className="p-6 w-full">
       {/* Header */}
