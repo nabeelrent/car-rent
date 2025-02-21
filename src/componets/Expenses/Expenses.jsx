@@ -7,12 +7,36 @@ import "react-datepicker/dist/react-datepicker.css";
 import * as XLSX from "xlsx";
 import { FaMoneyBillAlt, FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import { FaRupeeSign } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 function Expenses() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   dispatch(setPageName('Expenses List')); // Setting the page name
+  // const expenseOptions = ["Rent", "Utilities", "Office Supplies", "Travel", "Other"];
+  const [expenseOptions, setexpenseOptions] = useState([]);
 
+  const getCartwo = async ()=>{
+    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expensetypes/`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Ensure this is dynamically fetched if needed
+        },
+        
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+  const expenseTypes = data.map((item) => item.expense_type);
+
+setexpenseOptions(expenseTypes);
+}
   const [isCarExpenseModalOpen, setIsCarExpenseModalOpen] = useState(false);
   const [isOtherExpenseModalOpen, setIsOtherExpenseModalOpen] = useState(false);
 
@@ -65,6 +89,7 @@ function Expenses() {
   }
   useEffect(() => {
     getCar()
+    getCartwo()
   }, []);
   // Sample data
   const [expenses, setExpenses] = useState([
@@ -209,7 +234,7 @@ console.log(formattedFromDate,formattedToDate,"pranv");
       amount: expenseData.amount,
       description: expenseData.description,
     };
-    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expenses/`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/expense/expenses/`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -319,23 +344,23 @@ console.log(formattedFromDate,formattedToDate,"pranv");
       
         </button>
       </div>
-      <div className="flex flex-wrap justify-between mb-4   w-full">
+      <div className="md:flex flex-wrap justify-between mb-4   w-full">
       {/* Total Expense Card */}
-      <div className="flex flex-col items-center p-6 bg-red-100 rounded-lg h-28 shadow-md md:w-96">
+      <div className="flex flex-col items-center p-6 bg-red-100 rounded-lg h-28 min-w-56 shadow-md w-auto">
         <FaArrowDown className="text-red-500 text-xl mb-2" />
         <h3 className="text-lg font-semibold text-red-700">Total Expense</h3>
         <p className="text-xl font-bold text-red-900 flex items-center"><FaRupeeSign/> {Math.abs(data.total_expense).toFixed(2)}</p>
       </div>
 
       {/* Total Income Card */}
-      <div className="flex flex-col items-center p-6 bg-green-100 rounded-lg h-28 shadow-md md:w-96">
+      <div className="flex flex-col items-center p-6 bg-green-100 rounded-lg h-28 shadow-md min-w-56">
         <FaArrowUp className="text-green-500 text-3xl mb-2" />
         <h3 className="text-lg font-semibold text-green-700">Total Income</h3>
         <p className="text-xl font-bold text-green-900 flex items-center" ><FaRupeeSign/> {data.total_income.toFixed(2)}</p>
       </div>
 
       {/* Total Profit Card */}
-      <div className="flex flex-col items-center p-6 bg-blue-100 rounded-lg h-28 shadow-md md:w-96">
+      <div className="flex flex-col items-center p-6 bg-blue-100 rounded-lg h-28 shadow-md min-w-56">
         <FaMoneyBillAlt className="text-blue-500 text-3xl mb-2" />
         <h3 className="text-lg font-semibold text-blue-700">Total Profit</h3>
         <p className="text-xl font-bold text-blue-900 flex items-center"><FaRupeeSign/> {data.total_profit.toFixed(2)}</p>
@@ -347,6 +372,8 @@ console.log(formattedFromDate,formattedToDate,"pranv");
         <table className="w-full border-collapse bg-white rounded-lg overflow-hidden">
           <thead className="bg-gray-50">
             <tr>
+            <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Serial No.</th>
+
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Date</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">REG : No</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Amount</th>
@@ -357,7 +384,11 @@ console.log(formattedFromDate,formattedToDate,"pranv");
           <tbody className="divide-y divide-gray-200">
             {expenses.map((expense, index) => (
               <tr key={index} className="hover:bg-gray-50">
-                <td className="px-6 py-4 text-sm text-gray-600">{expense.date}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600">{index + 1}</td>
+
+<td className="px-6 py-4 text-sm text-gray-600">
+  {new Intl.DateTimeFormat("en-GB").format(new Date(expense.date))}
+</td>
                 <td className="px-6 py-4 text-sm text-gray-600">{expense.regNo}</td>
                 <td className={`px-6 py-4 text-sm ${expense.amount < 0 ? 'text-red-600' : 'text-green-600'}`}>
           {expense.amount}
@@ -499,24 +530,39 @@ console.log(formattedFromDate,formattedToDate,"pranv");
                   </select>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Expense Type</label>
-                  <input
-                    type="text"
-                    value={newExpense.expenseType}
-                    onChange={(e) =>
-                      setNewExpense({
-                        ...newExpense,
-                        expenseType: e.target.value,
-                        expenseTypetwo: "",
-                      })
-                    }
-                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter expense type"
-                    required
-                    disabled={newExpense.expenseTypetwo !== ""}
-                  />
-                </div>
+
+                <div className="flex items-center space-x-2">
+      <div className="flex-grow items-center">
+        <label className="block text-sm font-medium text-gray-700 mb-1">Expense Type</label>
+        <select
+          value={newExpense.expenseType}
+          onChange={(e) =>
+            setNewExpense({
+              ...newExpense,
+              expenseType: e.target.value,
+              expenseTypetwo: "",
+            })
+          }
+          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+          disabled={newExpense.expenseTypetwo !== ""}
+        >
+          <option value="" disabled>Select expense type</option>
+          {expenseOptions.map((expense, index) => (
+            <option key={index} value={expense}>
+              {expense}
+            </option>
+          ))}
+        </select>
+      </div>
+      <button
+        onClick={() => navigate("/cars/expenses-type/")}
+        className="px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 mt-6"
+      >
+        +
+      </button>
+    </div>
+
 
 
                 <div>

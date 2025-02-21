@@ -4,15 +4,14 @@ import { FaSearch } from 'react-icons/fa';
 import { useDispatch } from 'react-redux';
 import { setPageName } from '../../store/pageSlice';
 
-function Car() {
+function ExpensesType() {
   const dispatch = useDispatch();
 
-    dispatch(setPageName('Car List')); // Setting the page name
+    dispatch(setPageName('Expenses Type List')); // Setting the page name
  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newCar, setNewCar] = useState({
-    regNo: "",
-    model: "",
+    expensetype: "",
   });
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -27,7 +26,7 @@ async function createCar(car_data) {
   
   if(!isEdit)
   {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}car/cars/`, {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expensetypes/`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -71,7 +70,7 @@ async function createCar(car_data) {
 }
 
 const getCar = async ()=>{
-    const response = await fetch(`${process.env.REACT_APP_API_URL}car/cars/`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expensetypes/`, {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
@@ -98,9 +97,7 @@ useEffect(() => {
     e.preventDefault();
     const newCarEntry = {
       
-      car_no: newCar.regNo,
-      car_model: newCar.model,
-      date_created: new Date().toISOString()
+        expense_type: newCar.expensetype,
     };
     
     
@@ -112,7 +109,7 @@ useEffect(() => {
     
   };
   const carDelete = async (carId)=>{
-    const response = await fetch(`${process.env.REACT_APP_API_URL}car/cars/${carId}/`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expensetypes/${carId}/`, {
         method: 'DELETE',
         headers: {
             'Accept': 'application/json',
@@ -136,7 +133,7 @@ const carEdit = (car_data)=>{
 setIsModalOpen(true)
 setIsEdit(true)
 
-setNewCar({id:car_data.id,regNo:car_data.car_no,model:car_data.car_model})
+setNewCar({id:car_data.id,expense_type:car_data.expense_type})
 }
   
 
@@ -144,7 +141,7 @@ setNewCar({id:car_data.id,regNo:car_data.car_no,model:car_data.car_model})
     <div className="w-full px-4 py-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold">CarList</h1>
+        <h1 className="text-xl font-semibold">Expense Type</h1>
         {/* <div className="relative bg-gray-200 rounded-lg">
                             <label className="flex gap-x-2 items-baseline">
                                 <FaSearch
@@ -164,7 +161,7 @@ setNewCar({id:car_data.id,regNo:car_data.car_no,model:car_data.car_model})
           onClick={() => setIsModalOpen(true)}
           className="px-4 py-2 bg-gradient-to-r from-[#B41749] to-[#387BBF] text-white rounded-md hover:bg-blue-600 transition-colors"
         >
-          + Add Car
+          + Expense Type
         </button>
       </div>
 
@@ -174,24 +171,23 @@ setNewCar({id:car_data.id,regNo:car_data.car_no,model:car_data.car_model})
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Serial No.</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">REG : No</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Model</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Date</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Expense Type</th>
+              {/* <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Date</th> */}
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
             {cars.map((car,index) => (
               <tr key={car.id} className="hover:bg-gray-50">
-    <td className="px-6 py-4 text-sm text-gray-600">{index + 1}</td>
-    <td className="px-6 py-4 text-sm text-gray-600">{car.car_no}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{car.car_model}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{car.date_created}</td>
+  <td className="px-6 py-4 text-sm text-gray-600">{index + 1}</td>
+                  {/* <td className="px-6 py-4 text-sm text-gray-600">{car.car_no}</td> */}
+                <td className="px-6 py-4 text-sm text-gray-600">{car.expense_type}</td>
+                {/* <td className="px-6 py-4 text-sm text-gray-600">{car.date_created}</td> */}
                 <td className="px-6 py-4 text-sm text-gray-600">
                   <div className="flex gap-3">
-                    <button onClick={()=>carEdit(car)} className="text-gray-600 hover:text-blue-500">
+                    {/* <button onClick={()=>carEdit(car)} className="text-gray-600 hover:text-blue-500">
                       <FaPencilAlt className="h-4 w-4" />
-                    </button>
+                    </button> */}
                     <button onClick={()=>carDelete(car.id)} className="text-gray-600 hover:text-red-500">
                       <FaTrash  className="h-4 w-4" />
                     </button>
@@ -208,7 +204,7 @@ setNewCar({id:car_data.id,regNo:car_data.car_no,model:car_data.car_model})
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Add New Car</h2>
+              <h2 className="text-xl font-semibold">Add Expense Type</h2>
               <button onClick={() => setIsModalOpen(false)} className="text-gray-500 hover:text-gray-700">
                 <FaTimes className="h-6 w-6" />
               </button>
@@ -218,20 +214,20 @@ setNewCar({id:car_data.id,regNo:car_data.car_no,model:car_data.car_model})
               <div className="space-y-4">
                 <div>
                   <label htmlFor="regNo" className="block text-sm font-medium text-gray-700 mb-1">
-                    Car Number
+                  Expense type
                   </label>
                   <input
-                    id="regNo"
+                    id="expensetype"
                     type="text"
-                    value={newCar.regNo}
-                    onChange={(e) => setNewCar({ ...newCar, regNo: e.target.value })}
+                    value={newCar.expensetype}
+                    onChange={(e) => setNewCar({ ...newCar, expensetype: e.target.value })}
                     className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter car number"
+                    placeholder="Enter Expense type"
                     required
                   />
                 </div>
 
-                <div>
+                {/* <div>
                   <label htmlFor="model" className="block text-sm font-medium text-gray-700 mb-1">
                     Model
                   </label>
@@ -244,7 +240,7 @@ setNewCar({id:car_data.id,regNo:car_data.car_no,model:car_data.car_model})
                     placeholder="Enter car model"
                     required
                   />
-                </div>
+                </div> */}
 
                 <div className="flex justify-end gap-3 mt-6">
                   <button type="submit"  className="px-4 py-2 bg-gradient-to-r from-[#B41749] to-[#387BBF] text-white rounded-md hover:bg-green-600">
@@ -263,4 +259,4 @@ setNewCar({id:car_data.id,regNo:car_data.car_no,model:car_data.car_model})
   );
 }
 
-export default Car;
+export default ExpensesType;

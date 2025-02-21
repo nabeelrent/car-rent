@@ -11,6 +11,7 @@ import { userlogout } from "../../store/AuthSlice";
 import { IoRadioButtonOn, } from "react-icons/io5";
 import { IoIosRadioButtonOff } from "react-icons/io";
 import { FaCar } from "react-icons/fa";
+import { GiExpense } from "react-icons/gi";
 
 import logo from '../../assets/logo/logo.png';
 
@@ -20,6 +21,10 @@ function SidebarBotConfiguration() {
   const menuData = [
     { name: "Cars", icon: <FaCar />, path: "/cars/car-list/", subMenu: null },
     { name: "Balance sheet ", icon: <FaHome />, path: "/cars/expenses/", subMenu: null },
+    { name: "Expenses Type ", icon: <GiExpense />, path: "/cars/expenses-type/", subMenu: null },
+
+
+
    
   ];
 
