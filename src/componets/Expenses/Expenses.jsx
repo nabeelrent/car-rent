@@ -247,6 +247,13 @@ console.log(formattedFromDate,formattedToDate,"pranv");
           >
             + Add  Expenses
           </button>
+          <button
+          className="flex items-center gap-2 px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
+          onClick={exportToExcel}
+        >
+          <FaDownload className="h-5 w-5" />
+          Download Excel
+        </button>
         </div>
       </div>
 
@@ -281,14 +288,21 @@ console.log(formattedFromDate,formattedToDate,"pranv");
           <FaCalendar className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
         </div>
         <div>
-      <select
+          <div>
+            
+          </div>
+        <select
         multiple
-        className="px-4 py-2 border rounded-md  focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white text-gray-700 h-20 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-100"
         onChange={handleSelectChange}
         value={selectedCars}
       >
         {carOptions.map((car) => (
-          <option key={car.value} value={car.value}>
+          <option
+            key={car.value}
+            value={car.value}
+            className="px-4 py-2 hover:bg-blue-50 cursor-pointer"
+          >
             {car.label}
           </option>
         ))}
@@ -296,17 +310,11 @@ console.log(formattedFromDate,formattedToDate,"pranv");
 
       
     </div>
-        <button
-          className="flex items-center gap-2 px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
-          onClick={exportToExcel}
-        >
-          <FaDownload className="h-5 w-5" />
-          Download Excel
-        </button>
+       
  <button
-          className="flex items-center gap-2 px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
+          className="flex items-center gap-2 px-4 py-2 h-16 text-white bg-green-500 rounded-md hover:bg-green-600"
           onClick={searchBYDate}
-        >
+        style={{height : "40px"}}>
          search
       
         </button>
