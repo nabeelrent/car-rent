@@ -93,10 +93,18 @@ function Expenses() {
 
   const handleAddOtherExpense = (e) => {
     e.preventDefault();
+    console.log(newExpense);
+    
+if(newExpense.expenseType.length > 0){
+  var exp = newExpense.expenseType 
+}
+else{
+  var exp = newExpense.expenseTypetwo
+}
     const newEntry = {
       date: new Date().toLocaleDateString(),
-      regNo: newExpense.expenseType,
-      amount: newExpense.amount,
+      regNo: exp,
+      amount: -newExpense.amount,
       description: newExpense.description,
     };
 
@@ -178,7 +186,7 @@ function Expenses() {
             onClick={() => setIsCarExpenseModalOpen(true)}
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
           >
-            + Add Car Balance
+            + Add Car Revenue
           </button>
           <button
             onClick={() => setIsOtherExpenseModalOpen(true)}
@@ -378,7 +386,7 @@ function Expenses() {
                       setNewExpense({
                         ...newExpense,
                         expenseTypetwo: e.target.value,
-                        expenseType: "", // Clear the other field
+                        expenseType: "", 
                       })
                     }
                     disabled={newExpense.expenseType !== ""}
