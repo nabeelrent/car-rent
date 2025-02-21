@@ -123,13 +123,13 @@ useEffect(() => {
             onClick={() => setIsCarExpenseModalOpen(true)}
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
           >
-            + Add Car Expenses
+            + Add Car Balance
           </button>
           <button
             onClick={() => setIsOtherExpenseModalOpen(true)}
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
           >
-            + Add Other Expenses
+            + Add  Expenses
           </button>
         </div>
       </div>
@@ -227,7 +227,7 @@ useEffect(() => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Add Car Expenses</h2>
+              <h2 className="text-xl font-semibold">Add Car Balance</h2>
               <button onClick={() => setIsCarExpenseModalOpen(false)} className="text-gray-500 hover:text-gray-700">
                 <FaTimes className="h-6 w-6" />
               </button>
@@ -292,7 +292,7 @@ useEffect(() => {
                     type="submit"
                     className="px-4 py-2 text-sm text-white bg-blue-500 rounded-md hover:bg-blue-600"
                   >
-                    Add Expense
+                    Add Balance
                   </button>
                 </div>
               </div>
