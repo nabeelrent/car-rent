@@ -73,6 +73,10 @@ function Expenses() {
     expenseType: "",
     expenseTypetwo: "",
   });
+  console.log(fromDate,"fromdt");
+  console.log(toDate,"to");
+  
+  
   useEffect(() => {
     fetchExpenses()
   }, []);
@@ -117,7 +121,22 @@ else{
 
 
   async function fetchExpenses() {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expenses/`, {
+    console.log("kk");
+    console.log(fromDate,toDate);
+    
+    
+    if(fromDate && toDate)
+    {
+const formattedFromDate = fromDate.toLocaleDateString("en-IN"); // "DD/MM/YYYY"
+const formattedToDate = toDate.toLocaleDateString("en-IN");
+console.log(formattedFromDate,formattedToDate,"pranv");
+
+      var url_get = `${process.env.REACT_APP_API_URL}expense/get-balance/?from_date=${formattedFromDate}&to_date=${formattedToDate}`
+    }
+    else{
+      var url_get = `${process.env.REACT_APP_API_URL}expense/get-balance/`
+    }
+    const response = await fetch(url_get, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -133,7 +152,7 @@ else{
 
     const data = await response.json();
     console.log('Fetched expenses:', data);
-    setExpenses(data.map((single_data) => {
+    setExpenses(data.data.map((single_data) => {
       return {
 
         date: single_data.expense_date,
@@ -145,6 +164,10 @@ else{
     }))
     console.log(expenses, "data");
 
+
+  }
+  const searchBYDate = async ()=>{
+    await fetchExpenses()
   }
 
 
@@ -241,7 +264,13 @@ else{
           <FaDownload className="h-5 w-5" />
           Download Excel
         </button>
-
+ <button
+          className="flex items-center gap-2 px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
+          onClick={searchBYDate}
+        >
+         search
+      
+        </button>
       </div>
 
       {/* Table */}
