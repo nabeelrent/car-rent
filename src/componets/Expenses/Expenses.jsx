@@ -31,7 +31,11 @@ function Expenses() {
 
 
   const [carOptions, setCaroption] = useState([])
-
+  const [selectedCars, setSelectedCars] = useState([]);
+  const handleSelectChange = (event) => {
+     const selectedValues = Array.from(event.target.selectedOptions, (option) => option.value);
+     setSelectedCars(selectedValues);
+   };
 
   const getCar = async () => {
 
@@ -52,10 +56,10 @@ function Expenses() {
 
     const data = await response.json();
     console.log('Car created:', data);
-    setCaroption(data.map((single_data) => {
+    setCaroption(data.data.map((single_data) => {
       return {
-        value: single_data.car_no,
-        label: single_data.car_no
+        value: single_data,
+        label: single_data
       }
     }))
   }
@@ -96,6 +100,11 @@ function Expenses() {
     setNewExpense({ selectedCars: "", amount: "", description: "", expenseType: "" });
     setIsCarExpenseModalOpen(false);
   };
+  const [data, setData] = useState({
+    total_expense: 0,
+    total_income: 0,
+    total_profit: 0,
+  });
 
   const handleAddOtherExpense = (e) => {
     e.preventDefault();
@@ -243,6 +252,7 @@ console.log(formattedFromDate,formattedToDate,"pranv");
 
       {/* Filters */}
       <div className="flex gap-4 mb-6">
+        
         <div className="relative">
           <DatePicker
             selected={fromDate}
@@ -273,7 +283,7 @@ console.log(formattedFromDate,formattedToDate,"pranv");
         <div>
       <select
         multiple
-        className="px-4 py-2 border rounded-md w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="px-4 py-2 border rounded-md  focus:outline-none focus:ring-2 focus:ring-blue-500"
         onChange={handleSelectChange}
         value={selectedCars}
       >
