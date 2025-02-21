@@ -63,7 +63,7 @@ setexpenseOptions(expenseTypes);
 
   const getCar = async () => {
 
-    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/d-exp-type`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}car/cars/`, {
 
       method: 'GET',
       headers: {
@@ -80,10 +80,10 @@ setexpenseOptions(expenseTypes);
 
     const data = await response.json();
     console.log('Car created:', data);
-    setCaroption(data.data.map((single_data) => {
+    setCaroption(data.map((single_data) => {
       return {
-        value: single_data,
-        label: single_data
+        value: single_data.car_no,
+        label: single_data.car_no
       }
     }))
   }
