@@ -1,4 +1,4 @@
-import React, { useState ,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { FaCalendar, FaDownload, FaEdit, FaTimes } from "react-icons/fa";
 import { useDispatch } from 'react-redux';
 import { setPageName } from '../../store/pageSlice';
@@ -7,10 +7,10 @@ import "react-datepicker/dist/react-datepicker.css";
 import * as XLSX from "xlsx";
 
 function Expenses() {
-      const dispatch = useDispatch();
-    
-        dispatch(setPageName('Expenses List')); // Setting the page name
-    
+  const dispatch = useDispatch();
+
+  dispatch(setPageName('Expenses List')); // Setting the page name
+
   const [isCarExpenseModalOpen, setIsCarExpenseModalOpen] = useState(false);
   const [isOtherExpenseModalOpen, setIsOtherExpenseModalOpen] = useState(false);
 
@@ -26,42 +26,43 @@ function Expenses() {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Expenses");
     XLSX.writeFile(workbook, "Expenses_List.xlsx");
   };
-  
-
-  const [carOptions,setCaroption] = useState([])
 
 
-  const getCar = async ()=>{
+  const [carOptions, setCaroption] = useState([])
+
+
+  const getCar = async () => {
 
     const response = await fetch(`${process.env.REACT_APP_API_URL}car/cars/`, {
 
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Ensure this is dynamically fetched if needed
-        },
-        
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Ensure this is dynamically fetched if needed
+      },
+
     });
 
     if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
     const data = await response.json();
     console.log('Car created:', data);
-    setCaroption(data.map((single_data)=>{
-      return {value:single_data.car_no,
-        label:single_data.car_no
+    setCaroption(data.map((single_data) => {
+      return {
+        value: single_data.car_no,
+        label: single_data.car_no
       }
     }))
-}
-useEffect(() => {
+  }
+  useEffect(() => {
     getCar()
-}, []);
+  }, []);
   // Sample data
   const [expenses, setExpenses] = useState([
-    
+
   ]);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
@@ -70,10 +71,11 @@ useEffect(() => {
     amount: "",
     description: "",
     expenseType: "",
+    expenseTypetwo: "",
   });
-useEffect(() => {
+  useEffect(() => {
     fetchExpenses()
-}, []);
+  }, []);
   const handleAddCarExpense = (e) => {
     e.preventDefault();
     const newEntry = {
@@ -83,7 +85,7 @@ useEffect(() => {
       description: newExpense.description,
     };
     createExpense(newEntry)
-    
+
 
     setNewExpense({ selectedCars: "", amount: "", description: "", expenseType: "" });
     setIsCarExpenseModalOpen(false);
@@ -97,74 +99,74 @@ useEffect(() => {
       amount: newExpense.amount,
       description: newExpense.description,
     };
-    
+
     createExpense(newEntry)
 
-    
-    setNewExpense({ selectedCars: "", amount: "", description: "", expenseType: "" });
+
+    setNewExpense({ selectedCars: "", amount: "", description: "", expenseType: "" ,});
     setIsOtherExpenseModalOpen(false);
   };
 
 
   async function fetchExpenses() {
     const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expenses/`, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}` // If authentication is required
-        }
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}` // If authentication is required
+      }
     });
 
     if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Failed to fetch expenses:", errorData);
-        throw new Error(`HTTP error! Status: ${response.status}`);
+      const errorData = await response.json();
+      console.error("Failed to fetch expenses:", errorData);
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
     const data = await response.json();
     console.log('Fetched expenses:', data);
-    setExpenses(data.map((single_data)=>{
+    setExpenses(data.map((single_data) => {
       return {
-     
-      date: single_data.expense_date,
-      regNo: single_data.expense_type,
-      amount: single_data.amount,
-      description:single_data.description,
-    
+
+        date: single_data.expense_date,
+        regNo: single_data.expense_type,
+        amount: single_data.amount,
+        description: single_data.description,
+
       }
     }))
-    console.log(expenses,"data");
-    
-}
+    console.log(expenses, "data");
+
+  }
 
 
 
-async function createExpense(expenseData) {
-  const newEntry = {
+  async function createExpense(expenseData) {
+    const newEntry = {
       expense_date: new Date().toISOString(),
       expense_type: expenseData.regNo,
       amount: expenseData.amount,
       description: expenseData.description,
     };
     const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expenses/`, {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}` // If authentication is required
-        },
-        body: JSON.stringify(newEntry)
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}` // If authentication is required
+      },
+      body: JSON.stringify(newEntry)
     });
 
     if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Failed to create expense:", errorData);
-        throw new Error(`HTTP error! Status: ${response.status}`);
+      const errorData = await response.json();
+      console.error("Failed to create expense:", errorData);
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
     const data = await response.json();
     console.log('Expense created:', data);
-fetchExpenses()
+    fetchExpenses()
   }
   return (
     <div className="p-6 w-full">
@@ -189,33 +191,33 @@ fetchExpenses()
 
       {/* Filters */}
       <div className="flex gap-4 mb-6">
-      <div className="relative">
-        <DatePicker
-          selected={fromDate}
-          onChange={(date) => setFromDate(date)}
-          selectsStart
-          startDate={fromDate}
-          endDate={toDate}
-          placeholderText="From Date"
-          className="pl-10 pr-4 py-2 border rounded-md w-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <FaCalendar className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
-      </div>
+        <div className="relative">
+          <DatePicker
+            selected={fromDate}
+            onChange={(date) => setFromDate(date)}
+            selectsStart
+            startDate={fromDate}
+            endDate={toDate}
+            placeholderText="From Date"
+            className="pl-10 pr-4 py-2 border rounded-md w-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <FaCalendar className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
+        </div>
 
-      {/* To Date Picker */}
-      <div className="relative">
-        <DatePicker
-          selected={toDate}
-          onChange={(date) => setToDate(date)}
-          selectsEnd
-          startDate={fromDate}
-          endDate={toDate}
-          minDate={fromDate}
-          placeholderText="To Date"
-          className="pl-10 pr-4 py-2 border rounded-md w-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <FaCalendar className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
-      </div>
+        {/* To Date Picker */}
+        <div className="relative">
+          <DatePicker
+            selected={toDate}
+            onChange={(date) => setToDate(date)}
+            selectsEnd
+            startDate={fromDate}
+            endDate={toDate}
+            minDate={fromDate}
+            placeholderText="To Date"
+            className="pl-10 pr-4 py-2 border rounded-md w-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <FaCalendar className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
+        </div>
         <select className="px-4 py-2 border rounded-md w-48 focus:outline-none focus:ring-2 focus:ring-blue-500">
           <option value="">Choose Car</option>
           {carOptions.map((car) => (
@@ -225,12 +227,12 @@ fetchExpenses()
           ))}
         </select>
         <button
-  className="flex items-center gap-2 px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
-  onClick={exportToExcel}
->
-  <FaDownload className="h-5 w-5" />
-  Download Excel
-</button>
+          className="flex items-center gap-2 px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
+          onClick={exportToExcel}
+        >
+          <FaDownload className="h-5 w-5" />
+          Download Excel
+        </button>
 
       </div>
 
@@ -291,7 +293,7 @@ fetchExpenses()
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Select Cars</label>
                   <select
-                    
+
                     className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     value={newExpense.selectedCars}
                     onChange={(e) =>
@@ -368,16 +370,47 @@ fetchExpenses()
             <form onSubmit={handleAddOtherExpense}>
               <div className="space-y-4">
                 <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Select Cars</label>
+                  <select
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={newExpense.expenseTypetwo}
+                    onChange={(e) =>
+                      setNewExpense({
+                        ...newExpense,
+                        expenseTypetwo: e.target.value,
+                        expenseType: "", // Clear the other field
+                      })
+                    }
+                    disabled={newExpense.expenseType !== ""}
+                  >
+                    <option value="">Select a car</option>
+                    {carOptions.map((car) => (
+                      <option key={car.value} value={car.value}>
+                        {car.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Expense Type</label>
                   <input
                     type="text"
                     value={newExpense.expenseType}
-                    onChange={(e) => setNewExpense({ ...newExpense, expenseType: e.target.value })}
+                    onChange={(e) =>
+                      setNewExpense({
+                        ...newExpense,
+                        expenseType: e.target.value,
+                        expenseTypetwo: "",
+                      })
+                    }
                     className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Enter expense type"
                     required
+                    disabled={newExpense.expenseTypetwo !== ""}
                   />
                 </div>
+
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Amount</label>
@@ -390,8 +423,8 @@ fetchExpenses()
                     required
                   />
                 </div>
-              
-              <div>
+
+                <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                   <textarea
                     value={newExpense.description}

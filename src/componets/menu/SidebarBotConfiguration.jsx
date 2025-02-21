@@ -90,7 +90,7 @@ function SidebarBotConfiguration() {
 </div>
 
       <div
-        className={`hidden md:flex border-r-[1px] border-gray-600  ${label ? 'w-[212px]' : 'w-20'}  h-screen ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-all`}
+        className={`hidden md:flex border-r-[1px] border-gray-600  ${label ? 'w-[212px]' : 'w-20'} min-h-screen  md:h-auto ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-all`}
       >
 
 
