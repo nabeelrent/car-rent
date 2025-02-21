@@ -5,6 +5,8 @@ import { setPageName } from '../../store/pageSlice';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import * as XLSX from "xlsx";
+import { FaMoneyBillAlt, FaArrowUp, FaArrowDown } from 'react-icons/fa';
+import { FaRupeeSign } from "react-icons/fa";
 
 function Expenses() {
   const dispatch = useDispatch();
@@ -29,7 +31,11 @@ function Expenses() {
 
 
   const [carOptions, setCaroption] = useState([])
-
+  const [data, setData] = useState({
+    total_expense: 0,
+    total_income: 0,
+    total_profit: 0,
+  });
 
   const getCar = async () => {
 
@@ -152,6 +158,15 @@ console.log(formattedFromDate,formattedToDate,"pranv");
 
     const data = await response.json();
     console.log('Fetched expenses:', data);
+    const apiResponse = {
+      total_expense: data.total_expense,
+      total_income:  data.total_income,
+      total_profit:  data.total_profit,
+    };
+
+    // Update state with API data
+    setData(apiResponse);
+
     setExpenses(data.data.map((single_data) => {
       return {
 
@@ -272,6 +287,28 @@ console.log(formattedFromDate,formattedToDate,"pranv");
       
         </button>
       </div>
+      <div className="flex flex-wrap justify-between mb-4   w-full">
+      {/* Total Expense Card */}
+      <div className="flex flex-col items-center p-6 bg-red-100 rounded-lg h-28 shadow-md w-96">
+        <FaArrowDown className="text-red-500 text-xl mb-2" />
+        <h3 className="text-lg font-semibold text-red-700">Total Expense</h3>
+        <p className="text-xl font-bold text-red-900 flex items-center"><FaRupeeSign/> {Math.abs(data.total_expense).toFixed(2)}</p>
+      </div>
+
+      {/* Total Income Card */}
+      <div className="flex flex-col items-center p-6 bg-green-100 rounded-lg h-28 shadow-md w-96">
+        <FaArrowUp className="text-green-500 text-3xl mb-2" />
+        <h3 className="text-lg font-semibold text-green-700">Total Income</h3>
+        <p className="text-xl font-bold text-green-900 flex items-center" ><FaRupeeSign/> {data.total_income.toFixed(2)}</p>
+      </div>
+
+      {/* Total Profit Card */}
+      <div className="flex flex-col items-center p-6 bg-blue-100 rounded-lg h-28 shadow-md w-96">
+        <FaMoneyBillAlt className="text-blue-500 text-3xl mb-2" />
+        <h3 className="text-lg font-semibold text-blue-700">Total Profit</h3>
+        <p className="text-xl font-bold text-blue-900 flex items-center"><FaRupeeSign/> {data.total_profit.toFixed(2)}</p>
+      </div>
+    </div>
 
       {/* Table */}
       <div className="overflow-x-auto">
@@ -382,7 +419,7 @@ console.log(formattedFromDate,formattedToDate,"pranv");
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 text-sm text-white bg-blue-500 rounded-md hover:bg-blue-600"
+                    className="px-4 py-2 text-sm text-white bg-gradient-to-r from-[#B41749] to-[#387BBF] rounded-md hover:bg-blue-600"
                   >
                     Add Balance
                   </button>
@@ -485,7 +522,7 @@ console.log(formattedFromDate,formattedToDate,"pranv");
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 text-sm text-white bg-blue-500 rounded-md hover:bg-blue-600"
+                    className="px-4 py-2 text-sm text-white bg-gradient-to-r from-[#B41749] to-[#387BBF] rounded-md hover:bg-blue-600"
                   >
                     Add Expense
                   </button>
