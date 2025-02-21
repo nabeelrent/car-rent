@@ -73,6 +73,10 @@ function Expenses() {
     expenseType: "",
     expenseTypetwo: "",
   });
+  console.log(fromDate,"fromdt");
+  console.log(toDate,"to");
+  
+  
   useEffect(() => {
     fetchExpenses()
   }, []);
@@ -93,10 +97,18 @@ function Expenses() {
 
   const handleAddOtherExpense = (e) => {
     e.preventDefault();
+    console.log(newExpense);
+    
+if(newExpense.expenseType.length > 0){
+  var exp = newExpense.expenseType 
+}
+else{
+  var exp = newExpense.expenseTypetwo
+}
     const newEntry = {
       date: new Date().toLocaleDateString(),
-      regNo: newExpense.expenseType,
-      amount: newExpense.amount,
+      regNo: exp,
+      amount: -newExpense.amount,
       description: newExpense.description,
     };
 
@@ -109,7 +121,22 @@ function Expenses() {
 
 
   async function fetchExpenses() {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expenses/`, {
+    console.log("kk");
+    console.log(fromDate,toDate);
+    
+    
+    if(fromDate && toDate)
+    {
+const formattedFromDate = fromDate.toLocaleDateString("en-IN"); // "DD/MM/YYYY"
+const formattedToDate = toDate.toLocaleDateString("en-IN");
+console.log(formattedFromDate,formattedToDate,"pranv");
+
+      var url_get = `${process.env.REACT_APP_API_URL}expense/get-balance/?from_date=${formattedFromDate}&to_date=${formattedToDate}`
+    }
+    else{
+      var url_get = `${process.env.REACT_APP_API_URL}expense/get-balance/`
+    }
+    const response = await fetch(url_get, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -125,7 +152,7 @@ function Expenses() {
 
     const data = await response.json();
     console.log('Fetched expenses:', data);
-    setExpenses(data.map((single_data) => {
+    setExpenses(data.data.map((single_data) => {
       return {
 
         date: single_data.expense_date,
@@ -137,6 +164,10 @@ function Expenses() {
     }))
     console.log(expenses, "data");
 
+
+  }
+  const searchBYDate = async ()=>{
+    await fetchExpenses()
   }
 
 
@@ -178,7 +209,7 @@ function Expenses() {
             onClick={() => setIsCarExpenseModalOpen(true)}
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
           >
-            + Add Car Balance
+            + Add Car Revenue
           </button>
           <button
             onClick={() => setIsOtherExpenseModalOpen(true)}
@@ -233,7 +264,13 @@ function Expenses() {
           <FaDownload className="h-5 w-5" />
           Download Excel
         </button>
-
+ <button
+          className="flex items-center gap-2 px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
+          onClick={searchBYDate}
+        >
+         search
+      
+        </button>
       </div>
 
       {/* Table */}
@@ -378,7 +415,7 @@ function Expenses() {
                       setNewExpense({
                         ...newExpense,
                         expenseTypetwo: e.target.value,
-                        expenseType: "", // Clear the other field
+                        expenseType: "", 
                       })
                     }
                     disabled={newExpense.expenseType !== ""}
