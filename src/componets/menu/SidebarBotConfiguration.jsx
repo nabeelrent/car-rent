@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import { userlogout } from "../../store/AuthSlice";
 import { IoRadioButtonOn, } from "react-icons/io5";
 import { IoIosRadioButtonOff } from "react-icons/io";
+import { FaCar } from "react-icons/fa";
 
 import logo from '../../assets/logo/logo.png';
 
@@ -17,8 +18,8 @@ import logo from '../../assets/logo/logo.png';
 
 function SidebarBotConfiguration() {
   const menuData = [
-    { name: "Cars", icon: <FaHome />, path: "/cars/car-list/", subMenu: null },
-    { name: "Expence", icon: <FaHome />, path: "/cars/expenses/", subMenu: null },
+    { name: "Cars", icon: <FaCar />, path: "/cars/car-list/", subMenu: null },
+    { name: "Balance sheet ", icon: <FaHome />, path: "/cars/expenses/", subMenu: null },
    
   ];
 

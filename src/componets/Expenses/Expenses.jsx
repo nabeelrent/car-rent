@@ -321,21 +321,21 @@ console.log(formattedFromDate,formattedToDate,"pranv");
       </div>
       <div className="flex flex-wrap justify-between mb-4   w-full">
       {/* Total Expense Card */}
-      <div className="flex flex-col items-center p-6 bg-red-100 rounded-lg h-28 shadow-md w-96">
+      <div className="flex flex-col items-center p-6 bg-red-100 rounded-lg h-28 shadow-md md:w-96">
         <FaArrowDown className="text-red-500 text-xl mb-2" />
         <h3 className="text-lg font-semibold text-red-700">Total Expense</h3>
         <p className="text-xl font-bold text-red-900 flex items-center"><FaRupeeSign/> {Math.abs(data.total_expense).toFixed(2)}</p>
       </div>
 
       {/* Total Income Card */}
-      <div className="flex flex-col items-center p-6 bg-green-100 rounded-lg h-28 shadow-md w-96">
+      <div className="flex flex-col items-center p-6 bg-green-100 rounded-lg h-28 shadow-md md:w-96">
         <FaArrowUp className="text-green-500 text-3xl mb-2" />
         <h3 className="text-lg font-semibold text-green-700">Total Income</h3>
         <p className="text-xl font-bold text-green-900 flex items-center" ><FaRupeeSign/> {data.total_income.toFixed(2)}</p>
       </div>
 
       {/* Total Profit Card */}
-      <div className="flex flex-col items-center p-6 bg-blue-100 rounded-lg h-28 shadow-md w-96">
+      <div className="flex flex-col items-center p-6 bg-blue-100 rounded-lg h-28 shadow-md md:w-96">
         <FaMoneyBillAlt className="text-blue-500 text-3xl mb-2" />
         <h3 className="text-lg font-semibold text-blue-700">Total Profit</h3>
         <p className="text-xl font-bold text-blue-900 flex items-center"><FaRupeeSign/> {data.total_profit.toFixed(2)}</p>
