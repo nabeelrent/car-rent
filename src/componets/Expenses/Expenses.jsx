@@ -319,7 +319,7 @@ console.log(formattedFromDate,formattedToDate,"pranv");
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">REG : No</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Amount</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Description</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Action</th>
+              {/* <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Action</th> */}
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -327,12 +327,13 @@ console.log(formattedFromDate,formattedToDate,"pranv");
               <tr key={index} className="hover:bg-gray-50">
                 <td className="px-6 py-4 text-sm text-gray-600">{expense.date}</td>
                 <td className="px-6 py-4 text-sm text-gray-600">{expense.regNo}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{expense.amount}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{expense.description}</td>
+                <td className={`px-6 py-4 text-sm ${expense.amount < 0 ? 'text-red-600' : 'text-green-600'}`}>
+          {expense.amount}
+        </td>                <td className="px-6 py-4 text-sm text-gray-600">{expense.description}</td>
                 <td className="px-6 py-4 text-sm text-gray-600">
-                  <button className="text-red-500 hover:text-red-700">
+                  {/* <button className="text-red-500 hover:text-red-700">
                     <FaEdit className="h-4 w-4" />
-                  </button>
+                  </button> */}
                 </td>
               </tr>
             ))}
@@ -341,7 +342,7 @@ console.log(formattedFromDate,formattedToDate,"pranv");
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-end gap-2 mt-4">
+      {/* <div className="flex items-center justify-end gap-2 mt-4">
         <button className="px-2 py-1 text-sm text-gray-600 hover:text-blue-500">«</button>
         <button className="px-2 py-1 text-sm text-white bg-red-500 rounded">1</button>
         <button className="px-2 py-1 text-sm text-gray-600 hover:text-blue-500">2</button>
@@ -349,7 +350,7 @@ console.log(formattedFromDate,formattedToDate,"pranv");
         <button className="px-2 py-1 text-sm text-gray-600 hover:text-blue-500">4</button>
         <button className="px-2 py-1 text-sm text-gray-600 hover:text-blue-500">5</button>
         <button className="px-2 py-1 text-sm text-gray-600 hover:text-blue-500">»</button>
-      </div>
+      </div> */}
 
       {/* Car Expenses Modal */}
       {isCarExpenseModalOpen && (
