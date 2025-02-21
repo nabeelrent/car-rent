@@ -31,15 +31,11 @@ function Expenses() {
 
 
   const [carOptions, setCaroption] = useState([])
-  const [data, setData] = useState({
-    total_expense: 0,
-    total_income: 0,
-    total_profit: 0,
-  });
+
 
   const getCar = async () => {
 
-    const response = await fetch(`${process.env.REACT_APP_API_URL}car/cars/`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/d-exp-type`, {
 
       method: 'GET',
       headers: {
@@ -56,20 +52,12 @@ function Expenses() {
 
     const data = await response.json();
     console.log('Car created:', data);
-    if (data.length > 0) {
-      const formattedCars = data.map((single_data) => ({
+    setCaroption(data.map((single_data) => {
+      return {
         value: single_data.car_no,
-        label: single_data.car_no,
-      }));
-
-      setCaroption(formattedCars);
-
-      // Automatically set the first car as selected
-      setNewExpense((prev) => ({
-        ...prev,
-        selectedCars: formattedCars[0].value,
-      }));
-    }
+        label: single_data.car_no
+      }
+    }))
   }
   useEffect(() => {
     getCar()
@@ -146,11 +134,21 @@ const formattedToDate = toDate.toLocaleDateString("en-IN");
 console.log(formattedFromDate,formattedToDate,"pranv");
 
       var url_get = `${process.env.REACT_APP_API_URL}expense/get-balance/?from_date=${formattedFromDate}&to_date=${formattedToDate}`
+     if(selectedCars.length > 0)
+    {
+      url_get = url_get + `&ex=${selectedCars}` 
+    }
+
     }
     else{
       var url_get = `${process.env.REACT_APP_API_URL}expense/get-balance/`
+  if(selectedCars.length > 0)
+    {
+      url_get = url_get + `?ex=${selectedCars}` 
     }
-    const response = await fetch(url_get, {
+
+    }
+      const response = await fetch(url_get, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -272,14 +270,22 @@ console.log(formattedFromDate,formattedToDate,"pranv");
           />
           <FaCalendar className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
         </div>
-        <select className="px-4 py-2 border rounded-md w-48 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <option value="">Choose Car</option>
-          {carOptions.map((car) => (
-            <option key={car.value} value={car.value}>
-              {car.label}
-            </option>
-          ))}
-        </select>
+        <div>
+      <select
+        multiple
+        className="px-4 py-2 border rounded-md w-48 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        onChange={handleSelectChange}
+        value={selectedCars}
+      >
+        {carOptions.map((car) => (
+          <option key={car.value} value={car.value}>
+            {car.label}
+          </option>
+        ))}
+      </select>
+
+      
+    </div>
         <button
           className="flex items-center gap-2 px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
           onClick={exportToExcel}
