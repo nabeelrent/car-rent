@@ -11,18 +11,18 @@ import { useNavigate } from "react-router-dom";
 import Multiselect from "multiselect-react-dropdown";
 import { IoMdSearch } from "react-icons/io";
 
-function Expenses() {
+function ExpenseNew() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  dispatch(setPageName('Balance sheet')); // Setting the page name
+  dispatch(setPageName('Expense List')); // Setting the page name
   // const expenseOptions = ["Rent", "Utilities", "Office Supplies", "Travel", "Other"];
   const [expenseOptions, setexpenseOptions] = useState([]);
 
   const [expeneceall, setexpeneceall] = useState([]);
 
   const getexpencetwo = async () => {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/d-exp-type/`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/expense_tp_loss/`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -221,14 +221,14 @@ function Expenses() {
       const formattedToDate = toDate.toLocaleDateString("en-IN");
       console.log(formattedFromDate, formattedToDate, "pranv");
 
-      var url_get = `${process.env.REACT_APP_API_URL}expense/get-balance/?from_date=${formattedFromDate}&to_date=${formattedToDate}`
+      var url_get = `${process.env.REACT_APP_API_URL}expense/expense_list_loss/?from_date=${formattedFromDate}&to_date=${formattedToDate}`
       if (selectedCarssend.length > 0) {
         url_get = url_get + `&ex=${selectedCarssend}`
       }
 
     }
     else {
-      var url_get = `${process.env.REACT_APP_API_URL}expense/get-balance/`
+      var url_get = `${process.env.REACT_APP_API_URL}expense/expense_list_loss/`
       if (selectedCarssend.length > 0) {
         url_get = url_get + `?ex=${selectedCarssend}`
       }
@@ -252,12 +252,15 @@ function Expenses() {
     console.log('Fetched expenses:', data);
     const apiResponse = {
       total_expense: data.total_expense,
-      total_income: data.total_income,
-      total_profit: data.total_profit,
+   
     };
 
     // Update state with API data
     setData(apiResponse);
+    // "amount": "-34.00",
+    // "expense_type": "kl 18 r 3745",
+    // "description": "addddddd",
+    // "expense_date": "2025-02-21T06:47:55.895000Z"
 
     setExpenses(data.data.map((single_data) => {
       return {
@@ -305,12 +308,13 @@ function Expenses() {
     const data = await response.json();
     console.log('Expense created:', data);
     fetchExpenses()
+    getexpencetwo()
   }
   return (
     <div className="p-6 w-full">
       {/* Header */}
       <div className="md:flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold text-blue-900 md:mb-0 mb-4">Balance sheet List</h1>
+        <h1 className="text-xl font-semibold text-blue-900 md:mb-0 mb-4">Expenses List</h1>
         <div className="flex gap-3">
           {/* <button
             onClick={() => setIsCarExpenseModalOpen(true)}
@@ -318,12 +322,12 @@ function Expenses() {
           >
             + Add Car Revenue
           </button> */}
-          {/* <button
+          <button
             onClick={() => setIsOtherExpenseModalOpen(true)}
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
           >
             + Add  Expenses
-          </button> */}
+          </button>
           <button
             className="flex items-center gap-2 px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
             onClick={exportToExcel}
@@ -422,7 +426,7 @@ function Expenses() {
       </div>
       <div class="flex mb-4 gap-4">
 
-        <div class="w-1/3 bg-red-100 h-24 py-4 ">
+        <div class="w-full bg-red-100 h-24 py-4 ">
           <div className="flex justify-center items-center">
             <FaArrowDown className="text-red-500 text-xl" />
             <h3 className="text-lg font-semibold text-red-700">Total Expense</h3>
@@ -432,7 +436,7 @@ function Expenses() {
           </div>
         </div>
 
-        <div class="w-1/3 bg-green-100 h-24 py-4 ">
+        {/* <div class="w-1/3 bg-green-100 h-24 py-4 ">
           <div className="flex justify-center items-center">
             <FaArrowUp className="text-green-500 text-3xl " />
             <h3 className="text-lg font-semibold text-green-700">Total Income</h3>
@@ -440,10 +444,10 @@ function Expenses() {
           <div className="flex justify-center items-center">
             <p className="text-xl font-bold text-green-900 flex items-center" ><FaRupeeSign /> {data.total_income.toFixed(2)}</p>
           </div>
-        </div>
+        </div> */}
 
 
-        <div class="w-1/3 bg-blue-100 h-24 py-4 ">
+        {/* <div class="w-1/3 bg-blue-100 h-24 py-4 ">
           <div className="flex justify-center items-center">
             <FaMoneyBillAlt className="text-green-500 text-3xl " />
             <h3 className="text-lg font-semibold text-blue-700">Total Profit</h3>
@@ -451,7 +455,7 @@ function Expenses() {
           <div className="flex justify-center items-center">
             <p className="text-xl font-bold text-blue-900 flex items-center"><FaRupeeSign /> {data.total_profit.toFixed(2)}</p>
           </div>
-        </div>
+        </div> */}
 
 
       </div>
@@ -729,4 +733,4 @@ function Expenses() {
   );
 }
 
-export default Expenses;
+export default ExpenseNew;

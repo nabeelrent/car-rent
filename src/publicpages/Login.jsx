@@ -49,7 +49,7 @@ const userLogIn = "dfg"
   
         localStorage.setItem('username', username);
   
-        navigate('/cars/car-list/');
+        navigate('/cars/expenses/');
       }
     } catch (error) {
       if (error.response) {
