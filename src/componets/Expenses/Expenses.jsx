@@ -335,7 +335,7 @@ function Expenses() {
       </div>
 
       {/* Filters */}
-      <div className="md:flex gap-4 mb-6">
+      <div className="md:flex gap-4  mb-6">
         <div className="flex md:justify-start md:mb-0 mb-3 md:gap-4 gap-3">
           <div className="relative">
             <DatePicker
