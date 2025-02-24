@@ -186,7 +186,10 @@ setNewCar({id:car_data.id,regNo:car_data.car_no,model:car_data.car_model})
     <td className="px-6 py-4 text-sm text-gray-600">{index + 1}</td>
     <td className="px-6 py-4 text-sm text-gray-600">{car.car_no}</td>
                 <td className="px-6 py-4 text-sm text-gray-600">{car.car_model}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{car.date_created}</td>
+                {/* <td className="px-6 py-4 text-sm text-gray-600">{car.date_created}</td> */}
+                <td className="px-6 py-4 text-sm text-gray-600">
+                  {new Intl.DateTimeFormat("en-GB").format(new Date(car.date_created))}
+                </td>
                 <td className="px-6 py-4 text-sm text-gray-600">
                   <div className="flex gap-3">
                     <button onClick={()=>carEdit(car)} className="text-gray-600 hover:text-blue-500">

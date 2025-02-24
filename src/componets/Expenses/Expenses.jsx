@@ -8,6 +8,8 @@ import * as XLSX from "xlsx";
 import { FaMoneyBillAlt, FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import { FaRupeeSign } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import Multiselect from "multiselect-react-dropdown";
+import { IoMdSearch } from "react-icons/io";
 
 function Expenses() {
   const dispatch = useDispatch();
@@ -17,26 +19,52 @@ function Expenses() {
   // const expenseOptions = ["Rent", "Utilities", "Office Supplies", "Travel", "Other"];
   const [expenseOptions, setexpenseOptions] = useState([]);
 
-  const getCartwo = async ()=>{
-    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expensetypes/`, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Ensure this is dynamically fetched if needed
-        },
-        
+  const [expeneceall, setexpeneceall] = useState([]);
+
+  const getexpencetwo = async () => {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/d-exp-type/`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Ensure this is dynamically fetched if needed
+      },
+
     });
 
     if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
     const data = await response.json();
-  const expenseTypes = data.map((item) => item.expense_type);
+    console.log(data, "data-p");
 
-setexpenseOptions(expenseTypes);
-}
+    const expenseTypes = data.data.map((item) => ({ value: item, label: item }));
+
+    setexpeneceall(expenseTypes);
+  }
+
+
+  const getCartwo = async () => {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expensetypes/`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Ensure this is dynamically fetched if needed
+      },
+
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const expenseTypes = data.map((item) => item.expense_type);
+
+    setexpenseOptions(expenseTypes);
+  }
   const [isCarExpenseModalOpen, setIsCarExpenseModalOpen] = useState(false);
   const [isOtherExpenseModalOpen, setIsOtherExpenseModalOpen] = useState(false);
 
@@ -55,11 +83,37 @@ setexpenseOptions(expenseTypes);
 
 
   const [carOptions, setCaroption] = useState([])
+  console.log(carOptions, "carOptions-ppp");
+  console.log(expeneceall, "testiyu");
+
+
+
   const [selectedCars, setSelectedCars] = useState([]);
-  const handleSelectChange = (event) => {
-     const selectedValues = Array.from(event.target.selectedOptions, (option) => option.value);
-     setSelectedCars(selectedValues);
-   };
+  const [selectedCarssend, setselectedCarssend] = useState([]);
+
+  const handleSelectChange = (selectedList) => {
+    const selectedValues = selectedList.map((item) => item.value);
+
+    console.log(selectedValues, "selectedValues");
+
+    setselectedCarssend(selectedValues);
+    setSelectedCars(selectedList);
+
+    console.log(selectedCars, "selectedCars*");
+  };
+
+  // Function to remove an item from both states
+  const handleRemoveItem = (itemToRemove) => {
+    setSelectedCars((prevSelected) =>
+      prevSelected.filter((item) => item.value !== itemToRemove.value)
+    );
+
+    setselectedCarssend((prevSelected) =>
+      prevSelected.filter((value) => value !== itemToRemove.value)
+    );
+  };
+
+
 
   const getCar = async () => {
 
@@ -90,6 +144,7 @@ setexpenseOptions(expenseTypes);
   useEffect(() => {
     getCar()
     getCartwo()
+    getexpencetwo()
   }, []);
   // Sample data
   const [expenses, setExpenses] = useState([
@@ -104,10 +159,10 @@ setexpenseOptions(expenseTypes);
     expenseType: "",
     expenseTypetwo: "",
   });
-  console.log(fromDate,"fromdt");
-  console.log(toDate,"to");
-  
-  
+  console.log(fromDate, "fromdt");
+  console.log(toDate, "to");
+
+
   useEffect(() => {
     fetchExpenses()
   }, []);
@@ -134,13 +189,13 @@ setexpenseOptions(expenseTypes);
   const handleAddOtherExpense = (e) => {
     e.preventDefault();
     console.log(newExpense);
-    
-if(newExpense.expenseType.length > 0){
-  var exp = newExpense.expenseType 
-}
-else{
-  var exp = newExpense.expenseTypetwo
-}
+
+    if (newExpense.expenseType.length > 0) {
+      var exp = newExpense.expenseType
+    }
+    else {
+      var exp = newExpense.expenseTypetwo
+    }
     const newEntry = {
       date: new Date().toLocaleDateString(),
       regNo: exp,
@@ -151,38 +206,35 @@ else{
     createExpense(newEntry)
 
 
-    setNewExpense({ selectedCars: "", amount: "", description: "", expenseType: "" ,});
+    setNewExpense({ selectedCars: "", amount: "", description: "", expenseType: "", });
     setIsOtherExpenseModalOpen(false);
   };
 
 
   async function fetchExpenses() {
     console.log("kk");
-    console.log(fromDate,toDate);
-    
-    
-    if(fromDate && toDate)
-    {
-const formattedFromDate = fromDate.toLocaleDateString("en-IN"); // "DD/MM/YYYY"
-const formattedToDate = toDate.toLocaleDateString("en-IN");
-console.log(formattedFromDate,formattedToDate,"pranv");
+    console.log(fromDate, toDate);
+
+
+    if (fromDate && toDate) {
+      const formattedFromDate = fromDate.toLocaleDateString("en-IN"); // "DD/MM/YYYY"
+      const formattedToDate = toDate.toLocaleDateString("en-IN");
+      console.log(formattedFromDate, formattedToDate, "pranv");
 
       var url_get = `${process.env.REACT_APP_API_URL}expense/get-balance/?from_date=${formattedFromDate}&to_date=${formattedToDate}`
-     if(selectedCars.length > 0)
-    {
-      url_get = url_get + `&ex=${selectedCars}` 
-    }
+      if (selectedCarssend.length > 0) {
+        url_get = url_get + `&ex=${selectedCarssend}`
+      }
 
     }
-    else{
+    else {
       var url_get = `${process.env.REACT_APP_API_URL}expense/get-balance/`
-  if(selectedCars.length > 0)
-    {
-      url_get = url_get + `?ex=${selectedCars}` 
-    }
+      if (selectedCarssend.length > 0) {
+        url_get = url_get + `?ex=${selectedCarssend}`
+      }
 
     }
-      const response = await fetch(url_get, {
+    const response = await fetch(url_get, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -200,8 +252,8 @@ console.log(formattedFromDate,formattedToDate,"pranv");
     console.log('Fetched expenses:', data);
     const apiResponse = {
       total_expense: data.total_expense,
-      total_income:  data.total_income,
-      total_profit:  data.total_profit,
+      total_income: data.total_income,
+      total_profit: data.total_profit,
     };
 
     // Update state with API data
@@ -221,7 +273,7 @@ console.log(formattedFromDate,formattedToDate,"pranv");
 
 
   }
-  const searchBYDate = async ()=>{
+  const searchBYDate = async () => {
     await fetchExpenses()
   }
 
@@ -257,8 +309,8 @@ console.log(formattedFromDate,formattedToDate,"pranv");
   return (
     <div className="p-6 w-full">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold text-blue-900">Expenses List</h1>
+      <div className="md:flex items-center justify-between mb-6">
+        <h1 className="text-xl font-semibold text-blue-900 md:mb-0 mb-4">Expenses List</h1>
         <div className="flex gap-3">
           <button
             onClick={() => setIsCarExpenseModalOpen(true)}
@@ -273,109 +325,169 @@ console.log(formattedFromDate,formattedToDate,"pranv");
             + Add  Expenses
           </button>
           <button
-          className="flex items-center gap-2 px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
-          onClick={exportToExcel}
-        >
-          <FaDownload className="h-5 w-5" />
-          Download Excel
-        </button>
+            className="flex items-center gap-2 px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
+            onClick={exportToExcel}
+          >
+            <FaDownload className="h-5 w-5" />
+            Download Excel
+          </button>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="flex gap-4 mb-6">
-        
-        <div className="relative">
-          <DatePicker
-            selected={fromDate}
-            onChange={(date) => setFromDate(date)}
-            selectsStart
-            startDate={fromDate}
-            endDate={toDate}
-            placeholderText="From Date"
-            className="pl-10 pr-4 py-2 border rounded-md w-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <FaCalendar className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
-        </div>
-
-        {/* To Date Picker */}
-        <div className="relative">
-          <DatePicker
-            selected={toDate}
-            onChange={(date) => setToDate(date)}
-            selectsEnd
-            startDate={fromDate}
-            endDate={toDate}
-            minDate={fromDate}
-            placeholderText="To Date"
-            className="pl-10 pr-4 py-2 border rounded-md w-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <FaCalendar className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
-        </div>
-        <div>
-          <div>
-            
+      <div className="md:flex gap-4 mb-6">
+        <div className="flex md:justify-start md:mb-0 mb-3 md:gap-4 gap-3">
+          <div className="relative">
+            <DatePicker
+              selected={fromDate}
+              onChange={(date) => setFromDate(date)}
+              selectsStart
+              startDate={fromDate}
+              endDate={toDate}
+              placeholderText="From Date"
+              className="pl-10 pr-4 py-2 h-[50px] border rounded-md w-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <FaCalendar className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
           </div>
-        <select
-        multiple
-        className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white text-gray-700 h-20 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-100"
-        onChange={handleSelectChange}
-        value={selectedCars}
-      >
-        {carOptions.map((car) => (
-          <option
-            key={car.value}
-            value={car.value}
-            className="px-4 py-2 hover:bg-blue-50 cursor-pointer"
-          >
-            {car.label}
-          </option>
-        ))}
-      </select>
 
-      
-    </div>
-       
- <button
-          className="flex items-center gap-2 px-4 py-2 h-16 text-white bg-green-500 rounded-md hover:bg-green-600"
+          {/* To Date Picker */}
+          <div className="relative">
+            <DatePicker
+              selected={toDate}
+              onChange={(date) => setToDate(date)}
+              selectsEnd
+              startDate={fromDate}
+              endDate={toDate}
+              minDate={fromDate}
+              placeholderText="To Date"
+              className="pl-10 pr-4 py-2 h-[50px] border rounded-md w-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <FaCalendar className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
+          </div>
+
+          <button
+          className="md:hidden flex items-center justify-center gap-2 px-4 py-2 h-16 text-white bg-green-500 rounded-md hover:bg-green-600"
           onClick={searchBYDate}
-        style={{height : "40px"}}>
-         search
-      
+          style={{ height: "40px" }}>
+          search
+
+          <IoMdSearch />
+        </button>
+
+        </div>
+
+
+        <div className="w-96">
+
+          <Multiselect
+            options={expeneceall} // Options to display in the dropdown
+            selectedValues={selectedCars} // Preselected values
+            onSelect={(selectedList) => handleSelectChange(selectedList)} // On select event
+            onRemove={(selectedList) => handleRemoveItem(selectedList)} // On remove event
+            displayValue="label" // Property to show in the dropdown
+            className="border border-gray-300 rounded-lg shadow-sm w-full bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            style={{
+              multiselectContainer: {
+                width: "100%",
+                height: "auto",
+              },
+              searchBox: {
+                padding: "10px",
+                borderRadius: "8px",
+              },
+              chips: {
+                backgroundColor: "#3b82f6",
+                color: "white",
+              },
+              option: {
+                padding: "8px",
+                cursor: "pointer",
+              },
+            }}
+          />
+
+
+
+
+        </div>
+
+        <button
+          className="hidden md:flex items-center justify-center gap-2 px-4 py-2 h-16 text-white bg-green-500 rounded-md hover:bg-green-600"
+          onClick={searchBYDate}
+          style={{ height: "40px" }}>
+          search
+
+          <IoMdSearch />
         </button>
       </div>
+      <div class="flex mb-4 gap-4">
+
+        <div class="w-1/3 bg-red-100 h-24 py-4 ">
+          <div className="flex justify-center items-center">
+            <FaArrowDown className="text-red-500 text-xl" />
+            <h3 className="text-lg font-semibold text-red-700">Total Expense</h3>
+          </div>
+          <div className="flex justify-center items-center">
+            <p className="text-xl font-bold text-red-900 flex items-center"><FaRupeeSign /> {Math.abs(data.total_expense).toFixed(2)}</p>
+          </div>
+        </div>
+
+        <div class="w-1/3 bg-green-100 h-24 py-4 ">
+          <div className="flex justify-center items-center">
+            <FaArrowUp className="text-green-500 text-3xl " />
+            <h3 className="text-lg font-semibold text-green-700">Total Income</h3>
+          </div>
+          <div className="flex justify-center items-center">
+            <p className="text-xl font-bold text-green-900 flex items-center" ><FaRupeeSign /> {data.total_income.toFixed(2)}</p>
+          </div>
+        </div>
+
+
+        <div class="w-1/3 bg-blue-100 h-24 py-4 ">
+          <div className="flex justify-center items-center">
+            <FaMoneyBillAlt className="text-green-500 text-3xl " />
+            <h3 className="text-lg font-semibold text-blue-700">Total Profit</h3>
+          </div>
+          <div className="flex justify-center items-center">
+            <p className="text-xl font-bold text-blue-900 flex items-center"><FaRupeeSign /> {data.total_profit.toFixed(2)}</p>
+          </div>
+        </div>
+
+
+      </div>
       <div className="md:flex flex-wrap justify-between mb-4   w-full">
-      {/* Total Expense Card */}
-      <div className="flex flex-col items-center p-6 bg-red-100 rounded-lg h-28 min-w-56 shadow-md w-auto">
-        <FaArrowDown className="text-red-500 text-xl mb-2" />
-        <h3 className="text-lg font-semibold text-red-700">Total Expense</h3>
-        <p className="text-xl font-bold text-red-900 flex items-center"><FaRupeeSign/> {Math.abs(data.total_expense).toFixed(2)}</p>
-      </div>
+        {/* Total Expense Card */}
+        {/* <div className="flex flex-col items-center p-6 bg-red-100 rounded-lg h-28 min-w-56 shadow-md w-auto">
+          <FaArrowDown className="text-red-500 text-xl mb-2" />
+          <h3 className="text-lg font-semibold text-red-700">Total Expense</h3>
+          <p className="text-xl font-bold text-red-900 flex items-center"><FaRupeeSign /> {Math.abs(data.total_expense).toFixed(2)}</p>
+        </div> */}
 
-      {/* Total Income Card */}
-      <div className="flex flex-col items-center p-6 bg-green-100 rounded-lg h-28 shadow-md min-w-56">
-        <FaArrowUp className="text-green-500 text-3xl mb-2" />
-        <h3 className="text-lg font-semibold text-green-700">Total Income</h3>
-        <p className="text-xl font-bold text-green-900 flex items-center" ><FaRupeeSign/> {data.total_income.toFixed(2)}</p>
-      </div>
+        {/* Total Income Card */}
+        {/* <div className="flex flex-col items-center p-6 bg-green-100 rounded-lg h-28 shadow-md min-w-56">
+          <FaArrowUp className="text-green-500 text-3xl mb-2" />
+          <h3 className="text-lg font-semibold text-green-700">Total Income</h3>
+          <p className="text-xl font-bold text-green-900 flex items-center" ><FaRupeeSign /> {data.total_income.toFixed(2)}</p>
+        </div> */}
 
-      {/* Total Profit Card */}
-      <div className="flex flex-col items-center p-6 bg-blue-100 rounded-lg h-28 shadow-md min-w-56">
-        <FaMoneyBillAlt className="text-blue-500 text-3xl mb-2" />
-        <h3 className="text-lg font-semibold text-blue-700">Total Profit</h3>
-        <p className="text-xl font-bold text-blue-900 flex items-center"><FaRupeeSign/> {data.total_profit.toFixed(2)}</p>
+        {/* Total Profit Card */}
+        {/* <div className="flex flex-col items-center p-6 bg-blue-100 rounded-lg h-28 shadow-md min-w-56">
+          <FaMoneyBillAlt className="text-blue-500 text-3xl mb-2" />
+          <h3 className="text-lg font-semibold text-blue-700">Total Profit</h3>
+          <p className="text-xl font-bold text-blue-900 flex items-center"><FaRupeeSign /> {data.total_profit.toFixed(2)}</p>
+        </div> */}
+
       </div>
-    </div>
 
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full border-collapse bg-white rounded-lg overflow-hidden">
           <thead className="bg-gray-50">
             <tr>
-            <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Serial No.</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Serial No.</th>
 
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Date</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">REG : No</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Expenses Type</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Amount</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Description</th>
               {/* <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Action</th> */}
@@ -384,15 +496,15 @@ console.log(formattedFromDate,formattedToDate,"pranv");
           <tbody className="divide-y divide-gray-200">
             {expenses.map((expense, index) => (
               <tr key={index} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm text-gray-600">{index + 1}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{index + 1}</td>
 
-<td className="px-6 py-4 text-sm text-gray-600">
-  {new Intl.DateTimeFormat("en-GB").format(new Date(expense.date))}
-</td>
+                <td className="px-6 py-4 text-sm text-gray-600">
+                  {new Intl.DateTimeFormat("en-GB").format(new Date(expense.date))}
+                </td>
                 <td className="px-6 py-4 text-sm text-gray-600">{expense.regNo}</td>
                 <td className={`px-6 py-4 text-sm ${expense.amount < 0 ? 'text-red-600' : 'text-green-600'}`}>
-          {expense.amount}
-        </td>                <td className="px-6 py-4 text-sm text-gray-600">{expense.description}</td>
+                  {expense.amount}
+                </td>                <td className="px-6 py-4 text-sm text-gray-600">{expense.description}</td>
                 <td className="px-6 py-4 text-sm text-gray-600">
                   {/* <button className="text-red-500 hover:text-red-700">
                     <FaEdit className="h-4 w-4" />
@@ -440,8 +552,10 @@ console.log(formattedFromDate,formattedToDate,"pranv");
                         selectedCars: e.target.value,
                       })
                     }
-                  >
+                    required>
+                    <option value="">Select Car</option>
                     {carOptions.map((car) => (
+
                       <option key={car.value} value={car.value}>
                         {car.label}
                       </option>
@@ -516,7 +630,7 @@ console.log(formattedFromDate,formattedToDate,"pranv");
                       setNewExpense({
                         ...newExpense,
                         expenseTypetwo: e.target.value,
-                        expenseType: "", 
+                        expenseType: "",
                       })
                     }
                     disabled={newExpense.expenseType !== ""}
@@ -532,36 +646,36 @@ console.log(formattedFromDate,formattedToDate,"pranv");
 
 
                 <div className="flex items-center space-x-2">
-      <div className="flex-grow items-center">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Expense Type</label>
-        <select
-          value={newExpense.expenseType}
-          onChange={(e) =>
-            setNewExpense({
-              ...newExpense,
-              expenseType: e.target.value,
-              expenseTypetwo: "",
-            })
-          }
-          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-          disabled={newExpense.expenseTypetwo !== ""}
-        >
-          <option value="" disabled>Select expense type</option>
-          {expenseOptions.map((expense, index) => (
-            <option key={index} value={expense}>
-              {expense}
-            </option>
-          ))}
-        </select>
-      </div>
-      <button
-        onClick={() => navigate("/cars/expenses-type/")}
-        className="px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 mt-6"
-      >
-        +
-      </button>
-    </div>
+                  <div className="flex-grow items-center">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Expense Type</label>
+                    <select
+                      value={newExpense.expenseType}
+                      onChange={(e) =>
+                        setNewExpense({
+                          ...newExpense,
+                          expenseType: e.target.value,
+                          expenseTypetwo: "",
+                        })
+                      }
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                      disabled={newExpense.expenseTypetwo !== ""}
+                    >
+                      <option value="" disabled>Select expense type</option>
+                      {expenseOptions.map((expense, index) => (
+                        <option key={index} value={expense}>
+                          {expense}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <button
+                    onClick={() => navigate("/cars/expenses-type/")}
+                    className="px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 mt-6"
+                  >
+                    +
+                  </button>
+                </div>
 
 
 
