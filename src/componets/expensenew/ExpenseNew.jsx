@@ -10,6 +10,7 @@ import { FaRupeeSign } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import Multiselect from "multiselect-react-dropdown";
 import { IoMdSearch } from "react-icons/io";
+import { GrPowerReset } from "react-icons/gr";
 
 function ExpenseNew() {
   const dispatch = useDispatch();
@@ -165,7 +166,7 @@ function ExpenseNew() {
 
   useEffect(() => {
     fetchExpenses()
-  }, []);
+  }, [fromDate,toDate]);
   const handleAddCarExpense = (e) => {
     e.preventDefault();
     const newEntry = {
@@ -310,6 +311,12 @@ function ExpenseNew() {
     fetchExpenses()
     getexpencetwo()
   }
+  const handleReset = () => {
+    setFromDate(null);
+    setToDate(null);
+
+
+  };
   return (
     <div className="p-6 w-full">
       {/* Header */}
@@ -324,7 +331,7 @@ function ExpenseNew() {
           </button> */}
           <button
             onClick={() => setIsOtherExpenseModalOpen(true)}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+            className="px-4 py-2 bg-gradient-to-r from-[#bf8327] via-[#a46f32] to-[#34291c]  text-white rounded-md hover:bg-blue-600 transition-colors"
           >
             + Add  Expenses
           </button>
@@ -341,7 +348,7 @@ function ExpenseNew() {
       {/* Filters */}
       <div className="md:flex gap-4  mb-6">
         <div className="flex md:justify-start md:mb-0 mb-3 md:gap-4 gap-3">
-          <div className="relative">
+        <div className="relative">
             <DatePicker
               selected={fromDate}
               onChange={(date) => setFromDate(date)}
@@ -349,7 +356,7 @@ function ExpenseNew() {
               startDate={fromDate}
               endDate={toDate}
               placeholderText="From Date"
-              className="pl-10 pr-4 py-2 h-[50px] border rounded-md w-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="pl-10 pr-4 py-2 h-[40px] border rounded-md w-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <FaCalendar className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
           </div>
@@ -364,24 +371,30 @@ function ExpenseNew() {
               endDate={toDate}
               minDate={fromDate}
               placeholderText="To Date"
-              className="pl-10 pr-4 py-2 h-[50px] border rounded-md w-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="pl-10 pr-4 py-2 h-[40px] border rounded-md w-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <FaCalendar className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
           </div>
-
           <button
+        onClick={handleReset}
+        className="px-2 py-2 h-[40px] flex justify-start text-[14px] items-center gap-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+      >
+      <GrPowerReset/>  Reset
+      </button>
+
+          {/* <button
           className="md:hidden flex items-center justify-center gap-2 px-4 py-2 h-16 text-white bg-green-500 rounded-md hover:bg-green-600"
           onClick={searchBYDate}
           style={{ height: "40px" }}>
           search
 
           <IoMdSearch />
-        </button>
+        </button> */}
 
         </div>
 
 
-        <div className="w-96">
+        <div className="min-w-80 max-w-[350px] flex gap-6">
 
           <Multiselect
             options={expeneceall} // Options to display in the dropdown
@@ -411,18 +424,18 @@ function ExpenseNew() {
           />
 
 
-
-
-        </div>
-
-        <button
-          className="hidden md:flex items-center justify-center gap-2 px-4 py-2 h-16 text-white bg-green-500 rounded-md hover:bg-green-600"
+<button
+          className="flex items-center justify-center gap-2 px-4 py-2 h-16 text-white bg-green-500 rounded-md hover:bg-green-600"
           onClick={searchBYDate}
           style={{ height: "40px" }}>
           search
 
           <IoMdSearch />
         </button>
+
+        </div>
+
+
       </div>
       <div class="flex mb-4 gap-4">
 
@@ -719,7 +732,7 @@ function ExpenseNew() {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 text-sm text-white bg-gradient-to-r from-[#B41749] to-[#387BBF] rounded-md hover:bg-blue-600"
+                    className="px-4 py-2 text-sm text-white bg-gradient-to-r from-[#bf8327] via-[#a46f32] to-[#34291c]  rounded-md hover:bg-blue-600"
                   >
                     Add Expense
                   </button>

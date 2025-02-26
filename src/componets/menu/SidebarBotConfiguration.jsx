@@ -97,9 +97,9 @@ function SidebarBotConfiguration() {
   
   return (
     <>
-     <div className='absolute top-0 left-24 transform -translate-x-1/2 mb-2 flex justify-center items-center'>
+     <div className='absolute top-0 md:left-24 transform -translate-x-1/2 mb-2 flex justify-center items-center'>
   <button className="flex justify-center items-center">
-    <img className="w-24 h-16" src={logo} alt="" onClick={togglelabel} />
+    <img className="md:w-24 md:h-16 w-20 h-10" src={logo} alt="" onClick={togglelabel} />
   </button>
 </div>
 
@@ -109,7 +109,7 @@ function SidebarBotConfiguration() {
 
 
         <div
-          className={`bg-gradient-to-r from-[#B41749] to-[#387BBF]  p-4 ${label ? 'w-64' : ''}  overflow-y-auto transition-all [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300`}
+          className={`bg-gradient-to-r from-[#bf8327] via-[#a46f32] to-[#34291c] p-4 ${label ? 'w-64' : ''}  overflow-y-auto transition-all [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300`}
         >    
 
 
@@ -206,104 +206,7 @@ function SidebarBotConfiguration() {
 
       {/* Mobile Drawer */}
       <div className={`bg-gray-200 w-64 h-screen p-4 fixed top-0 left-0 z-40 ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:hidden transition-transform`}>
-        <div class="flex  justify-end items-center gap-2 mb-2">
-          <div className='relative flex justify-start p-1 items-center bg-gray-300  w-28 h-9 rounded-full ' >
-            <div className='flex items-center justify-start gap-2'>
-              <div className='bg-gray-300 rounded-full  text-[#0085FF] flex items-center justify-center'>
-                {/* <FaUserCircle /> */}
-                <img className='w-8 h-8 mt-[2px] rounded-full' src='https://i.pinimg.com/736x/c0/74/9b/c0749b7cc401421662ae901ec8f9f660.jpg' alt="" />
-
-              </div>
-              <span>Ajmal</span>
-              {isDropdownOpen ? (
-                <FaChevronUp className="text-[#003465] cursor-pointer" onClick={toggleDropdown} />
-              ) : (
-                <FaChevronDown className="text-[#003465] cursor-pointer" onClick={toggleDropdown} />
-              )}                        </div>
-
-
-            {isDropdownOpen && (
-              <div className={`absolute z-50 right-0 top-9 w-56 h-[360px] bg-white shadow-md rounded-xl mt-2 overflow-hidden transition-transform duration-300 ease-in-out ${isDropdownOpen ? 'transform translate-y-0' : 'transform translate-y-[-20px] opacity-0'}`}>
-                <div >
-                  <div className=' border-b-[1px] border-gray-200 w-full  items-center  justify-start  flex gap-4 p-2'>
-                    <div>
-                      <img className='w-8 h-8  rounded-full' src='https://i.pinimg.com/736x/c0/74/9b/c0749b7cc401421662ae901ec8f9f660.jpg' alt="" />
-
-                    </div>
-                    <div>
-                      <p className="leading-tight m-0 text-xs font-semibold">Ajmal</p>
-                      <span className="leading-tight m-0 text-xs text-[#0085FF] font-semibold">ajmal.p@stackerbee.com</span>
-                    </div>
-                  </div>
-
-                  <div className='border-b-[1px] border-gray-200   w-full  '>
-                    <div className='items-center  justify-start  flex gap-4 p-2'>
-                      <div>
-                        <CiSettings />
-                      </div>
-                      <div>
-                        <p className="leading-tight m-0 text-xs cursor-pointer font-semibold" >Account Settings</p>
-                      </div>
-                    </div>
-
-                    <div className='items-center  justify-start  flex gap-4 p-2 text-[#0085FF]'>
-                      <div>
-                        <MdOutlinePrivacyTip />
-
-                      </div>
-                      <div>
-                        <p className="leading-tight m-0 text-xs text-[#0085FF] cursor-pointer font-semibold">Privacy . Terms</p>
-                      </div>
-                    </div>
-
-                    <div className='items-center  justify-start  flex gap-4 p-2 text-[#0085FF]'>
-                      <div className='font-semibold'>
-                        <IoIosLogOut />
-
-                      </div>
-                      <div>
-                        <p className="leading-tight m-0 text-xs text-[#0085FF] cursor-pointer font-semibold" onClick={handleLogout}>Log out</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className='items-center text-sm  justify-start  flex gap-4 p-2'>
-                      Switch Account
-                    </div>
-                    <div className='items-center text-sm  justify-start   gap-4 p-2 '>
-                      <div className=' border-b-[1px] bg-[#F6F6F6] rounded-md border-gray-200 w-full mb-2 items-center  justify-start  flex gap-4 p-2'>
-                        <div>
-                          <p className="leading-tight m-0 text-xs font-semibold">Ajmal</p>
-                          <span className="leading-tight m-0 text-xs text-[#0085FF] cursor-pointer font-semibold">ajmal.p@stackerbee.com</span>
-                        </div>
-                        <div className='flex items-center justify-end cursor-pointer'>
-                          <IoRadioButtonOn />
-                        </div>
-                      </div>
-                      <div className=' border-b-[1px] bg-[#F6F6F6] rounded-md border-gray-200 w-full mb-2 items-center  justify-start  flex gap-4 p-2'>
-                        <div>
-                          <p className="leading-tight m-0 text-xs font-semibold cursor-pointer">Ajmal 2</p>
-                          <span className="leading-tight m-0 text-xs text-[#0085FF] font-semibold cursor-pointer">ajmal.p2@stackerbee.com</span>
-                        </div>
-                        <div className='flex items-center justify-end cursor-pointer'>
-                          <IoIosRadioButtonOff />
-                        </div>
-                      </div>
-                      <div className=' border-b-[1px] bg-[#F6F6F6] rounded-md border-gray-200 w-full mb-2 items-center justify-center  flex gap-4 p-2'>
-                        <div className='flex justify-center font-semibold items-center cursor-pointer gap-2'>
-                          <IoIosLogOut />
-                          <span className="leading-tight m-0 text-xs text-[#0085FF] font-semibold">Log out of all accounts</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            )}
-          </div>
-        </div>
+   
 
         {/* <div className="bg-white rounded-md text-lg p-1 text-black flex gap-3 items-center px-3 cursor-pointer" onClick={() => handleNavigation("/boat/boatlist")}>
           <FaArrowLeft />
@@ -315,7 +218,7 @@ function SidebarBotConfiguration() {
         {/* <div className="mt-6 flex flex-col space-y-4"> */}
         <div className="mt-6 flex flex-col space-y-4">
           {/* Top Section */}
-          {currentMenu === "main" ? (
+          {/* {currentMenu === "main" ? (
             <div className="bg-white rounded-md text-lg p-1 text-black flex gap-3 items-center px-3 cursor-pointer" onClick={() => handleNavigation("/boat/boatlist")}> <FaArrowLeft />
               Chat Bot</div>
           ) : (
@@ -325,7 +228,7 @@ function SidebarBotConfiguration() {
             >
               <FaArrowLeft /> Back
             </div>
-          )}
+          )} */}
 
           {/* Main Menu */}
           {currentMenu === "main" && (

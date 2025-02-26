@@ -16,7 +16,7 @@ function Navbar() {
     navigate('/');
 };
   return (
-    <div className=' w-full bg-green h-16 flex justify-start bg-gradient-to-r from-[#B41749] to-[#387BBF] '>
+    <div className=' w-full bg-green h-16 flex justify-start bg-gradient-to-r from-black via-[#af7c3d] to-black '>
         <div className=' w-[14%] border-r-2 border-gary-100'>
             
         </div>

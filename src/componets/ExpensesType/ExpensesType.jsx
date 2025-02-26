@@ -159,7 +159,7 @@ setNewCar({id:car_data.id,expense_type:car_data.expense_type})
                         </div> */}
         <button
           onClick={() => setIsModalOpen(true)}
-          className="px-4 py-2 bg-gradient-to-r from-[#B41749] to-[#387BBF] text-white rounded-md hover:bg-blue-600 transition-colors"
+          className="px-4 py-2 bg-gradient-to-r from-[#bf8327] via-[#a46f32] to-[#34291c]  text-white rounded-md hover:bg-blue-600 transition-colors"
         >
           + Expense Type
         </button>
