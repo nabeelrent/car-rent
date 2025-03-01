@@ -1,165 +1,108 @@
 import { FaPencilAlt, FaTrash, FaTimes } from "react-icons/fa";
-import React, { useState,useEffect } from "react";
-import { FaSearch } from 'react-icons/fa';
-import { useDispatch } from 'react-redux';
-import { setPageName } from '../../store/pageSlice';
+import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setPageName } from "../../store/pageSlice";
 
 function ExpensesType() {
   const dispatch = useDispatch();
+  dispatch(setPageName("Expenses Type List")); // Setting the page name
 
-    dispatch(setPageName('Expenses Type List')); // Setting the page name
- 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newCar, setNewCar] = useState({
-    expensetype: "",
-  });
-  const [searchTerm, setSearchTerm] = useState('');
+  const [isEdit, setIsEdit] = useState(false);
+  const [newExpense, setNewExpense] = useState({ expense_type: "" });
+  const [expenses, setExpenses] = useState([]);
 
-const [isEdit,setIsEdit] = useState(false)
-  const [cars, setCars] = useState([
-    
-  ]);
- 
-
-async function createCar(car_data) {
-  console.log(isEdit,"car_data");
-  
-  if(!isEdit)
-  {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expensetypes/`, {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}` 
-        },
-        body: JSON.stringify(car_data)
+  // Fetch Expenses
+  const getExpenses = async () => {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expense-types/`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      },
     });
 
     if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
     const data = await response.json();
-
-  }
-  else{
-     const response = await fetch(`${process.env.REACT_APP_API_URL}car/cars/${newCar.id}/`, {
-        method: 'PUT',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-             // Ensure this is dynamically fetched if needed
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}` // If authentication is required
-        },
-        body: JSON.stringify(car_data)
-    });
-
-    if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Failed to update car:", errorData);
-        throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log('Car updated:', data);
-    setIsEdit(false)
-  }
-      getCar()
-    
-}
-
-const getCar = async ()=>{
-    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expensetypes/`, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Ensure this is dynamically fetched if needed
-        },
-        
-    });
-
-    if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log('Car created:', data);
-    setCars(data)
-}
-useEffect(() => {
-    getCar()
-}, []);
-
-
-  const handleAddCar = (e) => {
-    e.preventDefault();
-    const newCarEntry = {
-      
-        expense_type: newCar.expensetype,
-    };
-    
-    
-      createCar(newCarEntry)
-    setIsModalOpen(false);
-    console.log(newCarEntry);
-    
-  
-    
+    setExpenses(data);
   };
-  const carDelete = async (carId)=>{
-    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expensetypes/${carId}/`, {
-        method: 'DELETE',
-        headers: {
-            'Accept': 'application/json',
-            
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}` // If authentication is required
-        }
+
+  useEffect(() => {
+    getExpenses();
+  }, []);
+
+  // Handle Add/Edit Expense
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const apiURL = isEdit
+      ? `${process.env.REACT_APP_API_URL}expense/api/expense-types/${newExpense.id}/`
+      : `${process.env.REACT_APP_API_URL}expense/api/expense-types/`;
+
+    const method = isEdit ? "PUT" : "POST";
+
+    const response = await fetch(apiURL, {
+      method: method,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      },
+      body: JSON.stringify({ expense_type: newExpense.expense_type }),
+    });
+
+    if (!response.ok) {
+      console.error(`Failed to ${isEdit ? "update" : "create"} expense.`);
+      return;
+    }
+
+    await response.json();
+    setIsModalOpen(false);
+    setIsEdit(false);
+    setNewExpense({ expense_type: "" });
+    getExpenses();
+  };
+
+  // Open Edit Modal
+  const openEditModal = (expense) => {
+    setIsModalOpen(true);
+    setIsEdit(true);
+    setNewExpense({ id: expense.id, expense_type: expense.expense_type });
+  };
+
+  // Delete Expense
+  const deleteExpense = async (expenseId) => {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expense-types/${expenseId}/`, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      },
     });
 
     if (response.status === 204) {
-        console.log(`Car with ID ${carId} deleted successfully.`);
+      getExpenses();
     } else {
-        const errorData = await response.json();
-        console.error("Failed to delete car:", errorData);
+      console.error("Failed to delete expense.");
     }
-    getCar()
-}
-
-const carEdit = (car_data)=>{
-  console.log(car_data);
-  
-setIsModalOpen(true)
-setIsEdit(true)
-
-setNewCar({id:car_data.id,expense_type:car_data.expense_type})
-}
-  
+  };
 
   return (
     <div className="w-full px-4 py-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-semibold">Expense Type</h1>
-        {/* <div className="relative bg-gray-200 rounded-lg">
-                            <label className="flex gap-x-2 items-baseline">
-                                <FaSearch
-                                    className="absolute left-5 top-1/2 transform -translate-y-1/2 admin-main-text text-[#003465]"
-                                    size={16}
-                                />
-                                <input
-                                    type="text"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full rounded-lg text-[#003465] bg-white pl-12 pr-4 py-2 focus:outline-none focus:border-transparent"
-                                    placeholder="Search your chatbot"
-                                />
-                            </label>
-                        </div> */}
         <button
-          onClick={() => setIsModalOpen(true)}
-          className="px-4 py-2 bg-gradient-to-r from-[#bf8327] via-[#a46f32] to-[#34291c]  text-white rounded-md hover:bg-blue-600 transition-colors"
+          onClick={() => {
+            setIsModalOpen(true);
+            setIsEdit(false);
+            setNewExpense({ expense_type: "" });
+          }}
+          className="px-4 py-2 bg-gradient-to-r from-[#bf8327] via-[#a46f32] to-[#34291c] text-white rounded-md hover:bg-blue-600 transition-colors"
         >
           + Expense Type
         </button>
@@ -172,24 +115,21 @@ setNewCar({id:car_data.id,expense_type:car_data.expense_type})
             <tr>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Serial No.</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Expense Type</th>
-              {/* <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Date</th> */}
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {cars.map((car,index) => (
-              <tr key={car.id} className="hover:bg-gray-50">
-  <td className="px-6 py-4 text-sm text-gray-600">{index + 1}</td>
-                  {/* <td className="px-6 py-4 text-sm text-gray-600">{car.car_no}</td> */}
-                <td className="px-6 py-4 text-sm text-gray-600">{car.expense_type}</td>
-                {/* <td className="px-6 py-4 text-sm text-gray-600">{car.date_created}</td> */}
+            {expenses.map((expense, index) => (
+              <tr key={expense.id} className="hover:bg-gray-50">
+                <td className="px-6 py-4 text-sm text-gray-600">{index + 1}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{expense.expense_type}</td>
                 <td className="px-6 py-4 text-sm text-gray-600">
                   <div className="flex gap-3">
-                    {/* <button onClick={()=>carEdit(car)} className="text-gray-600 hover:text-blue-500">
+                    <button onClick={() => openEditModal(expense)} className="text-gray-600 hover:text-blue-500">
                       <FaPencilAlt className="h-4 w-4" />
-                    </button> */}
-                    <button onClick={()=>carDelete(car.id)} className="text-gray-600 hover:text-red-500">
-                      <FaTrash  className="h-4 w-4" />
+                    </button>
+                    <button onClick={() => deleteExpense(expense.id)} className="text-gray-600 hover:text-red-500">
+                      <FaTrash className="h-4 w-4" />
                     </button>
                   </div>
                 </td>
@@ -199,52 +139,40 @@ setNewCar({id:car_data.id,expense_type:car_data.expense_type})
         </table>
       </div>
 
-      {/* Add Car Modal */}
+      {/* Modal (for Add/Edit) */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Add Expense Type</h2>
+              <h2 className="text-xl font-semibold">{isEdit ? "Edit Expense Type" : "Add Expense Type"}</h2>
               <button onClick={() => setIsModalOpen(false)} className="text-gray-500 hover:text-gray-700">
                 <FaTimes className="h-6 w-6" />
               </button>
             </div>
 
-            <form onSubmit={(e)=>handleAddCar(e)}>
+            <form onSubmit={handleSubmit}>
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="regNo" className="block text-sm font-medium text-gray-700 mb-1">
-                  Expense type
+                  <label htmlFor="expensetype" className="block text-sm font-medium text-gray-700 mb-1">
+                    Expense Type
                   </label>
                   <input
                     id="expensetype"
                     type="text"
-                    value={newCar.expensetype}
-                    onChange={(e) => setNewCar({ ...newCar, expensetype: e.target.value })}
+                    value={newExpense.expense_type}
+                    onChange={(e) => setNewExpense({ ...newExpense, expense_type: e.target.value })}
                     className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter Expense type"
+                    placeholder="Enter Expense Type"
                     required
                   />
                 </div>
 
-                {/* <div>
-                  <label htmlFor="model" className="block text-sm font-medium text-gray-700 mb-1">
-                    Model
-                  </label>
-                  <input
-                    id="model"
-                    type="text"
-                    value={newCar.model}
-                    onChange={(e) => setNewCar({ ...newCar, model: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter car model"
-                    required
-                  />
-                </div> */}
-
                 <div className="flex justify-end gap-3 mt-6">
-                  <button type="submit"  className="px-4 py-2 bg-gradient-to-r from-[#B41749] to-[#387BBF] text-white rounded-md hover:bg-green-600">
-                    Save
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-gradient-to-r from-[#B41749] to-[#387BBF] text-white rounded-md hover:bg-green-600"
+                  >
+                    {isEdit ? "Update" : "Save"}
                   </button>
                   <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400">
                     Cancel

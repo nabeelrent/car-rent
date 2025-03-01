@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import Multiselect from "multiselect-react-dropdown";
 import { IoMdSearch } from "react-icons/io";
 import { GrPowerReset } from "react-icons/gr";
+import { FaTrash } from "react-icons/fa";
 
 function Revenue() {
   const dispatch = useDispatch();
@@ -47,7 +48,7 @@ function Revenue() {
 
 
   const getCartwo = async () => {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expensetypes/`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expense-types/`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -137,7 +138,7 @@ function Revenue() {
     console.log('Car created:', data);
     setCaroption(data.map((single_data) => {
       return {
-        value: single_data.car_no,
+        value: single_data.id,
         label: single_data.car_no
       }
     }))
@@ -171,7 +172,7 @@ function Revenue() {
     e.preventDefault();
     const newEntry = {
       date: new Date().toLocaleDateString(),
-      regNo: newExpense.selectedCars,
+      expense_type_car: newExpense.selectedCars,
       amount: newExpense.amount,
       description: newExpense.description,
     };
@@ -262,9 +263,10 @@ function Revenue() {
 
     setExpenses(data.data.map((single_data) => {
       return {
-
+        id : single_data.id,
         date: single_data.expense_date,
-        regNo: single_data.expense_type,
+        expense_type_car_model: single_data.expense_type_car_model,
+        expense_type_car_model_id:single_data.expense_type_car_model_id,
         amount: single_data.amount,
         description: single_data.description,
 
@@ -283,11 +285,11 @@ function Revenue() {
   async function createExpense(expenseData) {
     const newEntry = {
       expense_date: new Date().toISOString(),
-      expense_type: expenseData.regNo,
+      expense_type_car: expenseData.expense_type_car,
       amount: expenseData.amount,
       description: expenseData.description,
     };
-    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/expense/expenses/`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expenses/`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -314,6 +316,78 @@ function Revenue() {
 
 
   };
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editedExpense, setEditedExpense] = useState(null);
+  const handleEditExpense = (expense) => {
+    setEditedExpense({
+      selectedCars: expense.expense_type_car_model_id || "", // Auto-select if available
+      amount: Math.abs(expense.amount), // Remove negative sign for input
+      description: expense.description,
+      id: expense.id, // Store the ID for updating
+    });
+  
+    setIsEditModalOpen(true); // Open edit modal
+  };
+  const handleDeleteExpense = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this expense?")) return;
+  
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}expense/api/expenses/${id}/`,
+        {
+          method: "DELETE",
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`, 
+          },
+        }
+      );
+  
+      if (!response.ok) {
+        throw new Error("Failed to delete expense");
+      }
+  
+      alert("Expense deleted successfully");
+      fetchExpenses(); // Refresh expenses list
+    } catch (error) {
+      console.error("Error deleting expense:", error);
+    }
+  };
+  const handleUpdateExpense = async (e) => {
+    e.preventDefault();
+  
+    const updatedEntry = {
+      date: new Date().toLocaleDateString(),
+      amount: editedExpense.amount, // Keep value as entered
+      description: editedExpense.description,
+      expense_type_car: editedExpense.selectedCars,
+    };
+    
+  
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}expense/api/expenses/${editedExpense.id}/`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`,
+          },
+          body: JSON.stringify(updatedEntry),
+        }
+      );
+  
+      if (!response.ok) {
+        throw new Error("Failed to update expense");
+      }
+  
+      alert("Expense updated successfully");
+      setIsEditModalOpen(false);
+      fetchExpenses(); // Refresh list
+    } catch (error) {
+      console.error("Error updating expense:", error);
+    }
+  };
+  
   return (
     <div className="p-6 w-full">
       {/* Header */}
@@ -494,10 +568,10 @@ function Revenue() {
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Serial No.</th>
 
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Date</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Expenses Type</th>
+              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Revenue Type</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Amount</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Description</th>
-              {/* <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Action</th> */}
+              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -508,31 +582,108 @@ function Revenue() {
                 <td className="px-6 py-4 text-sm text-gray-600">
                   {new Intl.DateTimeFormat("en-GB").format(new Date(expense.date))}
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-600">{expense.regNo}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{expense.expense_type_car_model}</td>
                 <td className={`px-6 py-4 text-sm ${expense.amount < 0 ? 'text-red-600' : 'text-green-600'}`}>
                   {expense.amount}
                 </td>                <td className="px-6 py-4 text-sm text-gray-600">{expense.description}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">
-                  {/* <button className="text-red-500 hover:text-red-700">
-                    <FaEdit className="h-4 w-4" />
-                  </button> */}
-                </td>
+                <td className="px-6 py-4 text-sm text-gray-600 flex gap-2">
+  {/* Edit Button */}
+  <button
+    className="text-blue-500 hover:text-blue-700"
+    onClick={() => handleEditExpense(expense)}
+  >
+    <FaEdit className="h-4 w-4" />
+  </button>
+
+  {/* Delete Button */}
+  <button
+    className="text-red-500 hover:text-red-700"
+    onClick={() => handleDeleteExpense(expense.id)}
+  >
+    <FaTrash className="h-4 w-4" />
+  </button>
+</td>
+
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      {/* Pagination */}
-      {/* <div className="flex items-center justify-end gap-2 mt-4">
-        <button className="px-2 py-1 text-sm text-gray-600 hover:text-blue-500">«</button>
-        <button className="px-2 py-1 text-sm text-white bg-red-500 rounded">1</button>
-        <button className="px-2 py-1 text-sm text-gray-600 hover:text-blue-500">2</button>
-        <button className="px-2 py-1 text-sm text-gray-600 hover:text-blue-500">3</button>
-        <button className="px-2 py-1 text-sm text-gray-600 hover:text-blue-500">4</button>
-        <button className="px-2 py-1 text-sm text-gray-600 hover:text-blue-500">5</button>
-        <button className="px-2 py-1 text-sm text-gray-600 hover:text-blue-500">»</button>
-      </div> */}
+      {isEditModalOpen && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div className="bg-white rounded-lg p-6 w-full max-w-md">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold">Edit Expense</h2>
+        <button onClick={() => setIsEditModalOpen(false)} className="text-gray-500 hover:text-gray-700">
+          <FaTimes className="h-6 w-6" />
+        </button>
+      </div>
+
+      <form onSubmit={handleUpdateExpense}>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+            <input
+              type="number"
+              value={editedExpense.amount}
+              onChange={(e) => setEditedExpense({ ...editedExpense, amount: e.target.value })}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter amount"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Select Cars</label>
+            <select
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={editedExpense.selectedCars}
+              onChange={(e) => setEditedExpense({ ...editedExpense, selectedCars: e.target.value })}
+              required
+            >
+              <option value="">Select Car</option>
+              {carOptions.map((car) => (
+                <option key={car.value} value={car.value}>
+                  {car.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <textarea
+              value={editedExpense.description}
+              onChange={(e) => setEditedExpense({ ...editedExpense, description: e.target.value })}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter description"
+              rows={3}
+              required
+            />
+          </div>
+
+          <div className="flex justify-end gap-3 mt-6">
+            <button
+              type="button"
+              onClick={() => setIsEditModalOpen(false)}
+              className="px-4 py-2 text-sm text-gray-600 border rounded-md hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 text-sm text-white bg-gradient-to-r from-[#bf8327] via-[#a46f32] to-[#34291c] rounded-md hover:bg-blue-600"
+            >
+              Update Expense
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+
 
       {/* Car Expenses Modal */}
       {isCarExpenseModalOpen && (

@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import Multiselect from "multiselect-react-dropdown";
 import { IoMdSearch } from "react-icons/io";
 import { GrPowerReset } from "react-icons/gr";
+import { MdOutlineDeleteOutline } from "react-icons/md";
 
 function ExpenseNew() {
   const dispatch = useDispatch();
@@ -21,6 +22,7 @@ function ExpenseNew() {
   const [expenseOptions, setexpenseOptions] = useState([]);
 
   const [expeneceall, setexpeneceall] = useState([]);
+  const [isEdit, setIsEdit] = useState(false)
 
   const getexpencetwo = async () => {
     const response = await fetch(`${process.env.REACT_APP_API_URL}expense/expense_tp_loss/`, {
@@ -47,7 +49,7 @@ function ExpenseNew() {
 
 
   const getCartwo = async () => {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expensetypes/`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expense-types/`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -62,7 +64,7 @@ function ExpenseNew() {
     }
 
     const data = await response.json();
-    const expenseTypes = data.map((item) => item.expense_type);
+    const expenseTypes = data.map((item) => { return { id: item.id, label: item.expense_type } });
 
     setexpenseOptions(expenseTypes);
   }
@@ -137,7 +139,7 @@ function ExpenseNew() {
     console.log('Car created:', data);
     setCaroption(data.map((single_data) => {
       return {
-        value: single_data.car_no,
+        value: single_data.id,
         label: single_data.car_no
       }
     }))
@@ -148,9 +150,7 @@ function ExpenseNew() {
     getexpencetwo()
   }, []);
   // Sample data
-  const [expenses, setExpenses] = useState([
-
-  ]);
+  const [expenses, setExpenses] = useState([]);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [newExpense, setNewExpense] = useState({
@@ -166,7 +166,7 @@ function ExpenseNew() {
 
   useEffect(() => {
     fetchExpenses()
-  }, [fromDate,toDate]);
+  }, [fromDate, toDate]);
   const handleAddCarExpense = (e) => {
     e.preventDefault();
     const newEntry = {
@@ -189,20 +189,27 @@ function ExpenseNew() {
 
   const handleAddOtherExpense = (e) => {
     e.preventDefault();
-    console.log(newExpense);
+    console.log(newExpense, "new-exp");
 
     if (newExpense.expenseType.length > 0) {
       var exp = newExpense.expenseType
+      var newEntry = {
+        date: new Date().toLocaleDateString(),
+        expense_type: exp,
+        amount: -newExpense.amount,
+        description: newExpense.description,
+      };
     }
     else {
       var exp = newExpense.expenseTypetwo
+      var newEntry = {
+        date: new Date().toLocaleDateString(),
+        expense_type_car: exp,
+        amount: -newExpense.amount,
+        description: newExpense.description,
+      };
     }
-    const newEntry = {
-      date: new Date().toLocaleDateString(),
-      regNo: exp,
-      amount: -newExpense.amount,
-      description: newExpense.description,
-    };
+
 
     createExpense(newEntry)
 
@@ -253,7 +260,7 @@ function ExpenseNew() {
     console.log('Fetched expenses:', data);
     const apiResponse = {
       total_expense: data.total_expense,
-   
+
     };
 
     // Update state with API data
@@ -265,9 +272,13 @@ function ExpenseNew() {
 
     setExpenses(data.data.map((single_data) => {
       return {
+        id: single_data.id,
 
         date: single_data.expense_date,
-        regNo: single_data.expense_type,
+        expense_type_name: single_data.expense_type_name,
+        expense_type_id: single_data.expense_type_id,
+        expense_type_car_model: single_data.expense_type_car_model,
+        expense_type_car_model_id: single_data.expense_type_car_model_id,
         amount: single_data.amount,
         description: single_data.description,
 
@@ -284,20 +295,15 @@ function ExpenseNew() {
 
 
   async function createExpense(expenseData) {
-    const newEntry = {
-      expense_date: new Date().toISOString(),
-      expense_type: expenseData.regNo,
-      amount: expenseData.amount,
-      description: expenseData.description,
-    };
-    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/expense/expenses/`, {
+
+    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expenses/`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('access_token')}` // If authentication is required
       },
-      body: JSON.stringify(newEntry)
+      body: JSON.stringify(expenseData)
     });
 
     if (!response.ok) {
@@ -317,6 +323,93 @@ function ExpenseNew() {
 
 
   };
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedExpense, setSelectedExpense] = useState(null);
+  const [editedExpense, setEditedExpense] = useState({
+    expenseType: "",
+    expenseTypetwo: "",
+    amount: "",
+    description: "",
+    id:""
+  });
+
+  const handleEditExpense = (e) => {
+    e.preventDefault();
+    
+    if (!editedExpense.expenseType && !editedExpense.expenseTypetwo) {
+      console.error("Expense type is required.");
+      return;
+    }
+  
+    let updatedEntry = {
+      date: new Date().toLocaleDateString(),
+      amount: -Math.abs(editedExpense.amount),
+       description: editedExpense.description,
+      ...(editedExpense.expenseType
+        ? { expense_type: editedExpense.expenseType }
+        : { expense_type_car: editedExpense.expenseTypetwo })
+    };
+    
+    
+  
+    updateExpense(editedExpense.id, updatedEntry);
+  
+    // Clear the edit state
+    setEditedExpense({ expenseType: "", expenseTypetwo: "", amount: "", description: "" });
+    setIsEditModalOpen(false);
+  };
+  
+  // Function to update the expense
+  async function updateExpense(expenseId, expenseData) {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expenses/${expenseId}/`, {
+      method: "PUT", // Assuming PUT method for update
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("access_token")}` // If authentication is required
+      },
+      body: JSON.stringify(expenseData),
+    });
+  
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Failed to update expense:", errorData);
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+  
+    const data = await response.json();
+    console.log("Expense updated:", data);
+  
+    // Refresh the expenses list
+    fetchExpenses();
+    getexpencetwo();
+  }
+  
+  const handleDeleteExpense = async (expenseId) => {
+    if (!window.confirm("Are you sure you want to delete this expense?")) return;
+  
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expenses/${expenseId}/`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`, // If authentication is required
+          'Accept': 'application/json',
+        },
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Failed to delete expense:", errorData);
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      console.log(`Expense ID ${expenseId} deleted successfully.`);
+      fetchExpenses(); // Refresh expense list after deletion
+    } catch (error) {
+      console.error("Error deleting expense:", error);
+    }
+  };
+  
   return (
     <div className="p-6 w-full">
       {/* Header */}
@@ -348,7 +441,7 @@ function ExpenseNew() {
       {/* Filters */}
       <div className="md:flex gap-4  mb-6">
         <div className="flex md:justify-start md:mb-0 mb-3 md:gap-4 gap-3">
-        <div className="relative">
+          <div className="relative">
             <DatePicker
               selected={fromDate}
               onChange={(date) => setFromDate(date)}
@@ -376,11 +469,11 @@ function ExpenseNew() {
             <FaCalendar className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
           </div>
           <button
-        onClick={handleReset}
-        className="px-2 py-2 h-[40px] flex justify-start text-[14px] items-center gap-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
-      >
-      <GrPowerReset/>  Reset
-      </button>
+            onClick={handleReset}
+            className="px-2 py-2 h-[40px] flex justify-start text-[14px] items-center gap-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+          >
+            <GrPowerReset />  Reset
+          </button>
 
           {/* <button
           className="md:hidden flex items-center justify-center gap-2 px-4 py-2 h-16 text-white bg-green-500 rounded-md hover:bg-green-600"
@@ -424,14 +517,14 @@ function ExpenseNew() {
           />
 
 
-<button
-          className="flex items-center justify-center gap-2 px-4 py-2 h-16 text-white bg-green-500 rounded-md hover:bg-green-600"
-          onClick={searchBYDate}
-          style={{ height: "40px" }}>
-          search
+          <button
+            className="flex items-center justify-center gap-2 px-4 py-2 h-16 text-white bg-green-500 rounded-md hover:bg-green-600"
+            onClick={searchBYDate}
+            style={{ height: "40px" }}>
+            search
 
-          <IoMdSearch />
-        </button>
+            <IoMdSearch />
+          </button>
 
         </div>
 
@@ -449,50 +542,11 @@ function ExpenseNew() {
           </div>
         </div>
 
-        {/* <div class="w-1/3 bg-green-100 h-24 py-4 ">
-          <div className="flex justify-center items-center">
-            <FaArrowUp className="text-green-500 text-3xl " />
-            <h3 className="text-lg font-semibold text-green-700">Total Income</h3>
-          </div>
-          <div className="flex justify-center items-center">
-            <p className="text-xl font-bold text-green-900 flex items-center" ><FaRupeeSign /> {data.total_income.toFixed(2)}</p>
-          </div>
-        </div> */}
-
-
-        {/* <div class="w-1/3 bg-blue-100 h-24 py-4 ">
-          <div className="flex justify-center items-center">
-            <FaMoneyBillAlt className="text-green-500 text-3xl " />
-            <h3 className="text-lg font-semibold text-blue-700">Total Profit</h3>
-          </div>
-          <div className="flex justify-center items-center">
-            <p className="text-xl font-bold text-blue-900 flex items-center"><FaRupeeSign /> {data.total_profit.toFixed(2)}</p>
-          </div>
-        </div> */}
 
 
       </div>
       <div className="md:flex flex-wrap justify-between mb-4   w-full">
-        {/* Total Expense Card */}
-        {/* <div className="flex flex-col items-center p-6 bg-red-100 rounded-lg h-28 min-w-56 shadow-md w-auto">
-          <FaArrowDown className="text-red-500 text-xl mb-2" />
-          <h3 className="text-lg font-semibold text-red-700">Total Expense</h3>
-          <p className="text-xl font-bold text-red-900 flex items-center"><FaRupeeSign /> {Math.abs(data.total_expense).toFixed(2)}</p>
-        </div> */}
 
-        {/* Total Income Card */}
-        {/* <div className="flex flex-col items-center p-6 bg-green-100 rounded-lg h-28 shadow-md min-w-56">
-          <FaArrowUp className="text-green-500 text-3xl mb-2" />
-          <h3 className="text-lg font-semibold text-green-700">Total Income</h3>
-          <p className="text-xl font-bold text-green-900 flex items-center" ><FaRupeeSign /> {data.total_income.toFixed(2)}</p>
-        </div> */}
-
-        {/* Total Profit Card */}
-        {/* <div className="flex flex-col items-center p-6 bg-blue-100 rounded-lg h-28 shadow-md min-w-56">
-          <FaMoneyBillAlt className="text-blue-500 text-3xl mb-2" />
-          <h3 className="text-lg font-semibold text-blue-700">Total Profit</h3>
-          <p className="text-xl font-bold text-blue-900 flex items-center"><FaRupeeSign /> {data.total_profit.toFixed(2)}</p>
-        </div> */}
 
       </div>
 
@@ -507,7 +561,7 @@ function ExpenseNew() {
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Expenses Type</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Amount</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Description</th>
-              {/* <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Action</th> */}
+              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -518,15 +572,35 @@ function ExpenseNew() {
                 <td className="px-6 py-4 text-sm text-gray-600">
                   {new Intl.DateTimeFormat("en-GB").format(new Date(expense.date))}
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-600">{expense.regNo}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{expense.expense_type_name ? expense.expense_type_name : expense.expense_type_car_model}</td>
                 <td className={`px-6 py-4 text-sm ${expense.amount < 0 ? 'text-red-600' : 'text-green-600'}`}>
                   {expense.amount}
                 </td>                <td className="px-6 py-4 text-sm text-gray-600">{expense.description}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">
-                  {/* <button className="text-red-500 hover:text-red-700">
+                <td className="px-6 py-4 text-sm text-gray-600 flex">
+                  <button
+                    className="text-blue-500 hover:text-blue-700"
+                    onClick={() => {
+                      setSelectedExpense(expense);
+                      setEditedExpense({
+                        expenseType: expense.expense_type_id ? expense.expense_type_id : "",
+                        expenseTypetwo: expense.expense_type_car_model_id ? expense.expense_type_car_model_id : "",
+                        amount: expense.amount,
+                        description: expense.description,
+                        id:expense.id
+                      });
+                      setIsEditModalOpen(true);
+                    }}
+                  >
                     <FaEdit className="h-4 w-4" />
-                  </button> */}
+                  </button>
+                  <button
+    className="text-red-500 hover:text-red-700"
+    onClick={() => handleDeleteExpense(expense.id)}
+  >
+    <MdOutlineDeleteOutline className="h-4 w-4" />
+  </button>
                 </td>
+
               </tr>
             ))}
           </tbody>
@@ -545,7 +619,7 @@ function ExpenseNew() {
       </div> */}
 
       {/* Car Expenses Modal */}
-      {isCarExpenseModalOpen && (
+      {/* {isCarExpenseModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
@@ -623,7 +697,124 @@ function ExpenseNew() {
             </form>
           </div>
         </div>
+      )} */}
+      {isEditModalOpen && selectedExpense && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Edit Expense</h2>
+              <button onClick={() => setIsEditModalOpen(false)} className="text-gray-500 hover:text-gray-700">
+                <FaTimes className="h-6 w-6" />
+              </button>
+            </div>
+
+            <form onSubmit={handleEditExpense}>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Select Cars</label>
+                  <select
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={editedExpense.expenseTypetwo}
+                    onChange={(e) =>
+                      setEditedExpense({
+                        ...editedExpense,
+                        expenseTypetwo: e.target.value,
+                        expenseType: "",
+                      })
+                    }
+                    disabled={editedExpense.expenseType !== ""}
+                  >
+                    <option value="">Select a car</option>
+                    {carOptions.map((car) => (
+                      <option key={car.value} value={car.value}>
+                        {car.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <div className="flex-grow items-center">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Expense Type</label>
+                    <select
+                      value={editedExpense.expenseType}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setEditedExpense({
+                          ...editedExpense,
+                          expenseType: value,
+                          expenseTypetwo: value === "" ? "" : editedExpense.expenseTypetwo,
+                        });
+                      }}
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                      disabled={editedExpense.expenseTypetwo !== ""}
+                    >
+                      <option value="">Select expense type</option>
+                      {expenseOptions.map((expense, index) => (
+                        <option key={index} value={expense.id}>
+                          {expense.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <button
+                    onClick={() => navigate("/cars/expenses-type/")}
+                    className="px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 mt-6"
+                  >
+                    +
+                  </button>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+                  <input
+  type="number"
+  value={Math.abs(editedExpense.amount)} // Ensure displayed value is always positive
+  onChange={(e) => {
+    const value = Math.abs(e.target.value); // Convert input to absolute value
+    setEditedExpense({ ...editedExpense, amount: -value }); // Store as negative in state
+  }}
+  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+  placeholder="Enter amount"
+  required
+/>
+
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <textarea
+                    value={editedExpense.description}
+                    onChange={(e) => setEditedExpense({ ...editedExpense, description: e.target.value })}
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter description"
+                    rows={3}
+                    required
+                  />
+                </div>
+
+                <div className="flex justify-end gap-3 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => setIsEditModalOpen(false)}
+                    className="px-4 py-2 text-sm text-gray-600 border rounded-md hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 text-sm text-white bg-gradient-to-r from-[#bf8327] via-[#a46f32] to-[#34291c] rounded-md hover:bg-blue-600"
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
+
 
       {/* Other Expenses Modal */}
       {isOtherExpenseModalOpen && (
@@ -680,8 +871,8 @@ function ExpenseNew() {
                     >
                       <option value="" disabled>Select expense type</option>
                       {expenseOptions.map((expense, index) => (
-                        <option key={index} value={expense}>
-                          {expense}
+                        <option key={index} value={expense.id}>
+                          {expense.label}
                         </option>
                       ))}
                     </select>

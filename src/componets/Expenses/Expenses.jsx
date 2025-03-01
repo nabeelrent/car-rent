@@ -47,7 +47,7 @@ function Expenses() {
 
 
   const getCartwo = async () => {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expensetypes/`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expense-types/`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -264,8 +264,9 @@ function Expenses() {
       return {
 
         date: single_data.expense_date,
-        regNo: single_data.expense_type,
-        amount: single_data.amount,
+        expense_type_name: single_data.expense_type_name,
+        expense_type_car_model:single_data.expense_type_car_model,
+                amount: single_data.amount,
         description: single_data.description,
 
       }
@@ -514,7 +515,7 @@ function Expenses() {
                 <td className="px-6 py-4 text-sm text-gray-600">
                   {new Intl.DateTimeFormat("en-GB").format(new Date(expense.date))}
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-600">{expense.regNo}</td>
+                <td className="px-6 py-4 text-sm text-gray-600">{expense.expense_type_name ?expense.expense_type_name : expense.expense_type_car_model }</td>
                 <td className={`px-6 py-4 text-sm ${expense.amount < 0 ? 'text-red-600' : 'text-green-600'}`}>
                   {expense.amount}
                 </td>                <td className="px-6 py-4 text-sm text-gray-600">{expense.description}</td>
