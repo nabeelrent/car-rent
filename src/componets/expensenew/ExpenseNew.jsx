@@ -194,7 +194,7 @@ function ExpenseNew() {
     if (newExpense.expenseType.length > 0) {
       var exp = newExpense.expenseType
       var newEntry = {
-        date: new Date().toLocaleDateString(),
+        expense_date: new Date().toISOString(),
         expense_type: exp,
         amount: -newExpense.amount,
         description: newExpense.description,
@@ -203,7 +203,7 @@ function ExpenseNew() {
     else {
       var exp = newExpense.expenseTypetwo
       var newEntry = {
-        date: new Date().toLocaleDateString(),
+        expense_date: new Date().toISOString(),
         expense_type_car: exp,
         amount: -newExpense.amount,
         description: newExpense.description,

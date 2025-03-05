@@ -211,6 +211,63 @@ function Expenses() {
     setIsOtherExpenseModalOpen(false);
   };
 
+  
+  async function exportToExceltwo() {
+    console.log("kk");
+    console.log(fromDate, toDate);
+
+
+    if (fromDate && toDate) {
+      const formattedFromDate = fromDate.toLocaleDateString("en-IN"); // "DD/MM/YYYY"
+      const formattedToDate = toDate.toLocaleDateString("en-IN");
+      console.log(formattedFromDate, formattedToDate, "pranv");
+
+      var url_get = `${process.env.REACT_APP_API_URL}expense/dowload-excel?from_date=${formattedFromDate}&to_date=${formattedToDate}`
+      if (selectedCarssend.length > 0) {
+        url_get = url_get + `&ex=${selectedCarssend}`
+      }
+
+    }
+    else {
+      var url_get = `${process.env.REACT_APP_API_URL}expense/dowload-excel`
+      if (selectedCarssend.length > 0) {
+        url_get = url_get + `?ex=${selectedCarssend}`
+      }
+
+    }
+    const response = await fetch(url_get, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}` // If authentication is required
+      }
+
+     
+    });
+
+    // if (!response.ok) {
+    //   const errorData = await response.json();
+    //   console.error("Failed to fetch expenses:", errorData);
+    //   throw new Error(`HTTP error! Status: ${response.status}`);
+    // }
+    const blob = await response.blob();
+
+    // Create a temporary link element
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.setAttribute('download', 'expenses.xlsx'); // Set the file name
+    document.body.appendChild(link);
+
+    // Trigger the download
+    link.click();
+
+    // Clean up
+    link.remove();
+    window.URL.revokeObjectURL(downloadUrl);
+
+
+  }
 
   async function fetchExpenses() {
     console.log("kk");
@@ -334,7 +391,7 @@ function Expenses() {
           </button> */}
           <button
             className="flex items-center gap-2 px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
-            onClick={exportToExcel}
+            onClick={exportToExceltwo}
           >
             <FaDownload className="h-5 w-5" />
             Download Excel
