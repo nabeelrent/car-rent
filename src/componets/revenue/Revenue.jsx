@@ -12,6 +12,8 @@ import Multiselect from "multiselect-react-dropdown";
 import { IoMdSearch } from "react-icons/io";
 import { GrPowerReset } from "react-icons/gr";
 import { FaTrash } from "react-icons/fa";
+import { TbCurrencyDirham } from "react-icons/tb";
+
 
 function Revenue() {
   const dispatch = useDispatch();
@@ -409,13 +411,13 @@ function Revenue() {
           >
             + Add  Expenses
           </button> */}
-          <button
+          {/* <button
             className="flex items-center gap-2 px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
             onClick={exportToExcel}
           >
             <FaDownload className="h-5 w-5" />
             Download Excel
-          </button>
+          </button> */}
         </div>
       </div>
 
@@ -522,7 +524,7 @@ function Revenue() {
             <h3 className="text-lg font-semibold text-green-700">Total Income</h3>
           </div>
           <div className="flex justify-center items-center">
-            <p className="text-xl font-bold text-green-900 flex items-center" ><FaRupeeSign /> {data.total_income.toFixed(2)}</p>
+            <p className="text-xl font-bold text-green-900 flex items-center" ><TbCurrencyDirham />  {data.total_income.toFixed(2)}</p>
           </div>
         </div>
         <div class="w-1/2 bg-green-100 h-24 py-4 ">
@@ -531,7 +533,7 @@ function Revenue() {
             <h3 className="text-lg font-semibold text-green-700">Total Vat</h3>
           </div>
           <div className="flex justify-center items-center">
-            <p className="text-xl font-bold text-green-900 flex items-center" ><FaRupeeSign /> {data.total_vat}</p>
+            <p className="text-xl font-bold text-green-900 flex items-center" ><TbCurrencyDirham /> {data.total_vat}</p>
           </div>
         </div>
         

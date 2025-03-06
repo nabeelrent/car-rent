@@ -12,6 +12,7 @@ import Multiselect from "multiselect-react-dropdown";
 import { IoMdSearch } from "react-icons/io";
 import { GrPowerReset } from "react-icons/gr";
 import { MdOutlineDeleteOutline } from "react-icons/md";
+import { TbCurrencyDirham } from "react-icons/tb";
 
 function ExpenseNew() {
   const dispatch = useDispatch();
@@ -209,7 +210,11 @@ function ExpenseNew() {
         description: newExpense.description,
       };
     }
-
+    setNewExpense({
+      ...newExpense,
+      expenseType: "",
+      expenseTypetwo: "",
+    })
 
     createExpense(newEntry)
 
@@ -428,13 +433,13 @@ function ExpenseNew() {
           >
             + Add  Expenses
           </button>
-          <button
+          {/* <button
             className="flex items-center gap-2 px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
             onClick={exportToExcel}
           >
             <FaDownload className="h-5 w-5" />
             Download Excel
-          </button>
+          </button> */}
         </div>
       </div>
 
@@ -538,7 +543,7 @@ function ExpenseNew() {
             <h3 className="text-lg font-semibold text-red-700">Total Expense</h3>
           </div>
           <div className="flex justify-center items-center">
-            <p className="text-xl font-bold text-red-900 flex items-center"><FaRupeeSign /> {Math.abs(data.total_expense).toFixed(2)}</p>
+            <p className="text-xl font-bold text-red-900 flex items-center"><TbCurrencyDirham /> {Math.abs(data.total_expense).toFixed(2)}</p>
           </div>
         </div>
 
@@ -914,13 +919,21 @@ function ExpenseNew() {
 
 
                 <div className="flex justify-end gap-3 mt-6">
-                  <button
-                    type="button"
-                    onClick={() => setIsOtherExpenseModalOpen(false)}
-                    className="px-4 py-2 text-sm text-gray-600 border rounded-md hover:bg-gray-50"
-                  >
-                    Cancel
-                  </button>
+                <button
+  type="button"
+  onClick={() => {
+    setIsOtherExpenseModalOpen(false);
+    setNewExpense({
+      ...newExpense,
+      expenseType: "",
+      expenseTypetwo: "",
+    });
+  }}
+  className="px-4 py-2 text-sm text-gray-600 border rounded-md hover:bg-gray-50"
+>
+  Cancel
+</button>
+
                   <button
                     type="submit"
                     className="px-4 py-2 text-sm text-white bg-gradient-to-r from-[#bf8327] via-[#a46f32] to-[#34291c]  rounded-md hover:bg-blue-600"

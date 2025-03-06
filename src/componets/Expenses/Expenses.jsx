@@ -11,6 +11,9 @@ import { useNavigate } from "react-router-dom";
 import Multiselect from "multiselect-react-dropdown";
 import { IoMdSearch } from "react-icons/io";
 import { GrPowerReset } from "react-icons/gr";
+import { TbCurrencyDirham } from "react-icons/tb";
+
+
 
 function Expenses() {
   const dispatch = useDispatch();
@@ -499,7 +502,7 @@ function Expenses() {
             <h3 className="text-lg font-semibold text-red-700">Total Expense</h3>
           </div>
           <div className="flex justify-center items-center">
-            <p className="text-xl font-bold text-red-900 flex items-center"><FaRupeeSign /> {Math.abs(data.total_expense).toFixed(2)}</p>
+            <p className=" Ttext-xl font-bold text-red-900 flex items-center "><TbCurrencyDirham />  {Math.abs(data.total_expense).toFixed(2)}  </p>
           </div>
         </div>
 
@@ -509,7 +512,7 @@ function Expenses() {
             <h3 className="text-lg font-semibold text-green-700">Total Income</h3>
           </div>
           <div className="flex justify-center items-center">
-            <p className="text-xl font-bold text-green-900 flex items-center" ><FaRupeeSign /> {data.total_income.toFixed(2)}</p>
+            <p className="text-xl font-bold text-green-900 flex items-center" ><TbCurrencyDirham /> {data.total_income.toFixed(2)}</p>
           </div>
         </div>
 
@@ -520,7 +523,7 @@ function Expenses() {
             <h3 className="text-lg font-semibold text-blue-700">Total Profit</h3>
           </div>
           <div className="flex justify-center items-center">
-            <p className="text-xl font-bold text-blue-900 flex items-center"><FaRupeeSign /> {data.total_profit.toFixed(2)}</p>
+            <p className="text-xl font-bold text-blue-900 flex items-center"> <TbCurrencyDirham /> {data.total_profit.toFixed(2)}</p>
           </div>
         </div>
 
