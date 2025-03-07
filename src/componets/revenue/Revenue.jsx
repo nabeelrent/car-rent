@@ -79,12 +79,32 @@ function Revenue() {
   //   { value: "Template 002", label: "Template 002" },
   // ];
   const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(expenses);
+    console.log(expenses, "expensespp");
+  
+    // Transform data: combine two fields and remove unwanted fields
+    const formattedExpenses = expenses.map(item => ({
+      Date: item.date,
+      Description: item.description,
+      "Revenue": `${item.expense_type_name || ""} - ${item.expense_type_car_model || ""}`,
+      Amount: parseFloat(item.amount || 0).toFixed(2) // Ensure amount is formatted properly
+    }));
+  
+    // Calculate total amount
+    let totalAmount = formattedExpenses.reduce((sum, item) => sum + parseFloat(item.Amount), 0);
+  
+    // Create worksheet
+    const worksheet = XLSX.utils.json_to_sheet(formattedExpenses);
+  
+    // Add total row at the bottom
+    const lastRow = formattedExpenses.length + 1; 
+    XLSX.utils.sheet_add_aoa(worksheet, [["", "Total", "", totalAmount.toFixed(2)]], { origin: lastRow });
+  
+    // Create workbook and export
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Expenses");
-    XLSX.writeFile(workbook, "Expenses_List.xlsx");
+    XLSX.writeFile(workbook, "Revenue_List.xlsx");
   };
-
+  
 
   const [carOptions, setCaroption] = useState([])
   console.log(carOptions, "carOptions-ppp");
@@ -411,13 +431,13 @@ function Revenue() {
           >
             + Add  Expenses
           </button> */}
-          {/* <button
+          <button
             className="flex items-center gap-2 px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
             onClick={exportToExcel}
           >
             <FaDownload className="h-5 w-5" />
             Download Excel
-          </button> */}
+          </button>
         </div>
       </div>
 
