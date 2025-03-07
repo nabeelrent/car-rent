@@ -85,13 +85,9 @@ function Expenses() {
     const formatDate = (isoString) => {
       return new Intl.DateTimeFormat("en-GB", {
         year: "numeric",
-        month: "2-digit",
+        month: "short", // Converts to Jan, Feb, etc.
         day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false,
-      }).format(new Date(isoString));
+      }).format(new Date(isoString)).replace(/\//g, '-'); // Replace / with -
     };
   
     // Calculate total revenue, total expenses, and total profit
@@ -144,6 +140,7 @@ function Expenses() {
     // Save Excel file
     XLSX.writeFile(workbook, "Expenses_List.xlsx");
   };
+  
     
 
 
