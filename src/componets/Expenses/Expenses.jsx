@@ -81,13 +81,16 @@ function Expenses() {
   const exportToExcel = () => {
     console.log(expenses, "expenses-test");
   
-    // Helper function to format date nicely
+    // Helper function to format date nicely with time
     const formatDate = (isoString) => {
       return new Intl.DateTimeFormat("en-GB", {
         year: "numeric",
         month: "short", // Converts to Jan, Feb, etc.
         day: "2-digit",
-      }).format(new Date(isoString)).replace(/\//g, '-'); // Replace / with -
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false, // Uses 24-hour format
+      }).format(new Date(isoString)).replace(/\//g, '-');
     };
   
     // Calculate total revenue, total expenses, and total profit
@@ -140,6 +143,7 @@ function Expenses() {
     // Save Excel file
     XLSX.writeFile(workbook, "Expenses_List.xlsx");
   };
+  
   
     
 
