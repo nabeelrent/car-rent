@@ -79,11 +79,72 @@ function Expenses() {
   //   { value: "Template 002", label: "Template 002" },
   // ];
   const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(expenses);
+    console.log(expenses, "expenses-test");
+  
+    // Helper function to format date nicely
+    const formatDate = (isoString) => {
+      return new Intl.DateTimeFormat("en-GB", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      }).format(new Date(isoString));
+    };
+  
+    // Calculate total revenue, total expenses, and total profit
+    let totalRevenue = 0;
+    let totalExpense = 0;
+  
+    // Transform data to merge expense_type_name and expense_type_car_model
+    const formattedExpenses = expenses.map((item) => {
+      const mergedType = item.expense_type_name || item.expense_type_car_model || ""; // Merge into a single column
+      const amount = parseFloat(item.amount);
+  
+      // Categorize amounts
+      if (amount > 0) {
+        totalRevenue += amount;
+      } else {
+        totalExpense += amount;
+      }
+  
+      return {
+        Date: formatDate(item.date), // Apply date formatting
+        "Expense Type": mergedType,
+        Amount: item.amount,
+        Description: item.description,
+      };
+    });
+  
+    // Calculate total profit (Revenue + Expense)
+    const totalProfit = totalRevenue + totalExpense;
+  
+    // Find the last row index
+    const lastRowIndex = formattedExpenses.length + 1;
+  
+    // Append summary rows
+    const totalRow = [
+      { Date: "Total", "Expense Type": "", Amount: "", Description: "" },
+      { Date: "Total Revenue", "Expense Type": "", Amount: totalRevenue.toFixed(2), Description: "" },
+      { Date: "Total Expense", "Expense Type": "", Amount: totalExpense.toFixed(2), Description: "" },
+      { Date: "Total Profit", "Expense Type": "", Amount: totalProfit.toFixed(2), Description: "" },
+    ];
+  
+    // Create worksheet and workbook with correct headers
+    const worksheet = XLSX.utils.json_to_sheet(formattedExpenses, { header: ["Date", "Expense Type", "Amount", "Description"] });
+  
+    // Add summary rows
+    XLSX.utils.sheet_add_json(worksheet, totalRow, { skipHeader: true, origin: lastRowIndex });
+  
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Expenses");
+  
+    // Save Excel file
     XLSX.writeFile(workbook, "Expenses_List.xlsx");
   };
+    
 
 
   const [carOptions, setCaroption] = useState([])
@@ -392,12 +453,21 @@ function Expenses() {
           >
             + Add  Expenses
           </button> */}
+
+
+<button
+            className="flex items-center gap-2 px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
+            onClick={exportToExcel}
+          >
+            <FaDownload className="h-5 w-5" />
+            Download Excel
+          </button>
           <button
             className="flex items-center gap-2 px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
             onClick={exportToExceltwo}
           >
-            <FaDownload className="h-5 w-5" />
-            Download Excel
+            <FaDownload className="md:text-15px text-[10px]h-5 w-5" />
+            Date-wise Excel Report
           </button>
         </div>
       </div>

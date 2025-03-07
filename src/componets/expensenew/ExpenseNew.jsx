@@ -163,6 +163,7 @@ function ExpenseNew() {
   });
   console.log(fromDate, "fromdt");
   console.log(toDate, "to");
+console.log(newExpense,"newExpense-op");
 
 
   useEffect(() => {
@@ -179,7 +180,13 @@ function ExpenseNew() {
     createExpense(newEntry)
 
 
-    setNewExpense({ selectedCars: "", amount: "", description: "", expenseType: "" });
+    setNewExpense({
+      selectedCars: "",
+      amount: "",
+      description: "",
+      expenseType: "",
+      expenseTypetwo: "",
+    });
     setIsCarExpenseModalOpen(false);
   };
   const [data, setData] = useState({
@@ -210,16 +217,18 @@ function ExpenseNew() {
         description: newExpense.description,
       };
     }
-    setNewExpense({
-      ...newExpense,
-      expenseType: "",
-      expenseTypetwo: "",
-    })
+ 
 
     createExpense(newEntry)
 
 
-    setNewExpense({ selectedCars: "", amount: "", description: "", expenseType: "", });
+    setNewExpense({
+      selectedCars: "",
+      amount: "",
+      description: "",
+      expenseType: "",
+      expenseTypetwo: "",
+    });
     setIsOtherExpenseModalOpen(false);
   };
 
@@ -312,10 +321,19 @@ function ExpenseNew() {
     });
 
     if (!response.ok) {
+      setNewExpense({
+        selectedCars: "",
+        amount: "",
+        description: "",
+        expenseType: "",
+        expenseTypetwo: "",
+      });
+
       const errorData = await response.json();
       console.error("Failed to create expense:", errorData);
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
+    console.log(newExpense,"newExpense-op-op");
 
     const data = await response.json();
     console.log('Expense created:', data);
@@ -924,7 +942,9 @@ function ExpenseNew() {
   onClick={() => {
     setIsOtherExpenseModalOpen(false);
     setNewExpense({
-      ...newExpense,
+      selectedCars: "",
+      amount: "",
+      description: "",
       expenseType: "",
       expenseTypetwo: "",
     });
