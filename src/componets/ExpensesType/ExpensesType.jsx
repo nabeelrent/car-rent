@@ -76,21 +76,28 @@ function ExpensesType() {
 
   // Delete Expense
   const deleteExpense = async (expenseId) => {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expense-types/${expenseId}/`, {
-      method: "DELETE",
-      headers: {
-        Accept: "application/json",
-        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-      },
-    });
-
-    if (response.status === 204) {
-      getExpenses();
-    } else {
-      console.error("Failed to delete expense.");
+    const isConfirmed = window.confirm("Are you sure you want to delete this expense?");
+    if (!isConfirmed) return;
+  
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}expense/api/expense-types/${expenseId}/`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+  
+      if (response.ok) {
+        getExpenses(); // Refresh the list after deletion
+      } else {
+        console.error("Failed to delete expense.");
+      }
+    } catch (error) {
+      console.error("Error deleting expense:", error);
     }
   };
-
+  
   return (
     <div className="w-full px-4 py-6">
       {/* Header */}
