@@ -177,7 +177,7 @@ function ExpensesType() {
                 <div className="flex justify-end gap-3 mt-6">
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-gradient-to-r from-[#B41749] to-[#387BBF] text-white rounded-md hover:bg-green-600"
+                    className="px-4 py-2 bg-gradient-to-r from-[#bf8327] via-[#a46f32] to-[#34291c] text-white rounded-md hover:bg-green-600"
                   >
                     {isEdit ? "Update" : "Save"}
                   </button>
