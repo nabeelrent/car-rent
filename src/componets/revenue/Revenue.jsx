@@ -538,7 +538,7 @@ function Revenue() {
           </div>
         </div> */}
         <div class="w-full gap-4  flex mb-4">
-        <div class="w-1/2 bg-green-100 h-24 py-4 ">
+        <div class="w-full bg-green-100 h-24 py-4 ">
           <div className="flex justify-center items-center">
             <FaArrowUp className="text-green-500 text-3xl " />
             <h3 className="text-lg font-semibold text-green-700">Total Income</h3>
@@ -547,7 +547,7 @@ function Revenue() {
             <p className="text-xl font-bold text-green-900 flex items-center" ><TbCurrencyDirham />  {data.total_income.toFixed(2)}</p>
           </div>
         </div>
-        <div class="w-1/2 bg-green-100 h-24 py-4 ">
+        {/* <div class="w-1/2 bg-green-100 h-24 py-4 ">
           <div className="flex justify-center items-center">
             <FaArrowUp className="text-green-500 text-3xl " />
             <h3 className="text-lg font-semibold text-green-700">Total Vat</h3>
@@ -555,7 +555,7 @@ function Revenue() {
           <div className="flex justify-center items-center">
             <p className="text-xl font-bold text-green-900 flex items-center" ><TbCurrencyDirham /> {data.total_vat}</p>
           </div>
-        </div>
+        </div> */}
         
         </div>
 
@@ -608,7 +608,7 @@ function Revenue() {
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Date</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Revenue Type</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Amount</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Vat</th>
+              {/* <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Vat</th> */}
 
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Description</th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Action</th>
@@ -626,7 +626,7 @@ function Revenue() {
                 <td className={`px-6 py-4 text-sm ${expense.amount < 0 ? 'text-red-600' : 'text-green-600'}`}>
                   {expense.amount}
                 </td>     
-                <td className="px-6 py-4 text-sm text-gray-600">{expense.vat}</td>
+                {/* <td className="px-6 py-4 text-sm text-gray-600">{expense.vat}</td> */}
          
                   <td className="px-6 py-4 text-sm text-gray-600">{expense.description}</td>
                 <td className="px-6 py-4 text-sm text-gray-600 flex gap-2">
